@@ -1,6 +1,7 @@
 package tn.esprit.tic.civiAgora.service;
 
 import tn.esprit.tic.civiAgora.dao.entity.Organization;
+import tn.esprit.tic.civiAgora.dao.entity.OrganizationRequest;
 import tn.esprit.tic.civiAgora.dao.entity.PasswordResetToken;
 import tn.esprit.tic.civiAgora.dao.entity.User;
 import tn.esprit.tic.civiAgora.dao.entity.enums.Role;
@@ -172,4 +173,32 @@ public class UserService {
         org.setUsersCount(count);
         organizationRepository.save(org);
     }
+
+    public void createInitialAdminForOrganization(Organization organization, OrganizationRequest request) {
+        if (organization == null || request == null || request.getContactEmail() == null) {
+            return;
+        }
+
+        if (userRepository.existsByEmail(request.getContactEmail())) {
+            return; // user already exists, do not overwrite
+        }
+
+        String[] nameParts = request.getContactPersonName() != null ? request.getContactPersonName().split(" ", 2) : new String[]{"Admin", ""};
+
+        User user = User.builder()
+                .firstName(nameParts[0])
+                .lastName(nameParts.length > 1 ? nameParts[1] : "")
+                .email(request.getContactEmail())
+                .phone(request.getPhone())
+                .enabled(true)
+                .archived(false)
+                .password(passwordEncoder.encode("TempPass@123"))
+                .role(Role.ADMIN)
+                .organization(organization)
+                .build();
+
+        userRepository.save(user);
+        updateUsersCount(organization.getId());
+    }
 }
+

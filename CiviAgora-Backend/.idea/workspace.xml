@@ -4,7 +4,199 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="89c0caf0-0095-4059-98c0-3df9f4cadc13" name="Changes" comment="first commit" />
+    <list default="true" id="89c0caf0-0095-4059-98c0-3df9f4cadc13" name="Changes" comment="first commit">
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/.idea/CiviAgora.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/ADMIN_PANEL_DOCUMENTATION.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/ATTRIBUTIONS.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/BACKEND_API_SPEC.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/DATA_ARCHITECTURE_README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/DEVELOPER_GUIDE.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/EXAMPLE_USAGE.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/KPI_CARDS_DESIGN_SYSTEM.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/LAYOUT_ARCHITECTURE.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/LEGAL_PAGES_DOCUMENTATION.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/MIGRATION_COMPLETE_SUMMARY.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/MOCK_DATA_AUDIT_COMPLETE.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/MOCK_DATA_INTEGRATION_PLAN.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/MOCK_DATA_MIGRATION_STATUS.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/QUICK_REFERENCE.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/RESOURCES_PAGES_DOCUMENTATION.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/SAAS_BACKOFFICE_DOCUMENTATION.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/dist/assets/index-CVgkxqG8.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/dist/assets/index-Y3ofGUMf.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/dist/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/guidelines/Guidelines.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/package-lock.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/package.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/postcss.config.mjs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/App.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/admin/components/AdminLayout.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/admin/components/StatCard.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/admin/components/dialogs/DeleteProcessDialog.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/admin/components/dialogs/DeleteUserDialog.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/admin/components/dialogs/EditProcessDialog.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/admin/components/dialogs/EditUserDialog.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/admin/components/dialogs/EmailUserDialog.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/admin/components/dialogs/EventDialogs.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/admin/components/dialogs/ManagePhasesDialog.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/admin/components/dialogs/NewUserDialog.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/admin/components/dialogs/PermissionsDialog.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/admin/components/dialogs/ResultDialogs.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/admin/components/dialogs/ThemeDialogs.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/admin/pages/AdminDashboard.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/admin/pages/AnalyticsPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/admin/pages/CalendarManagement.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/admin/pages/ExportsPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/admin/pages/ModerationPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/admin/pages/ParticipationsManagement.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/admin/pages/ProcessesManagement.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/admin/pages/ResultsPublication.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/admin/pages/ThemesManagement.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/admin/pages/UsersManagement.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/admin/pages/settings/AuditSettings.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/admin/pages/settings/DataSettings.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/admin/pages/settings/GeneralSettings.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/admin/pages/settings/NotificationsSettings.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/AuthModal.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/EmptyState.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ErrorMessage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/Footer.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/GlobalSearch.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/Header.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/LoadingSpinner.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/PageBanner.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ProtectedRoute.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/PublicLayout.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ScrollToTop.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/StatCard.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/StatusBadge.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ThemeTag.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/UserMenu.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/figma/ImageWithFallback.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/layout/ContentGrid.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/layout/FilterBar.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/layout/FilterField.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/layout/KPICard.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/layout/PageLayout.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/accordion.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/alert-dialog.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/alert.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/aspect-ratio.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/avatar.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/badge.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/breadcrumb.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/button.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/calendar.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/card.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/carousel.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/chart.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/checkbox.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/collapsible.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/command.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/context-menu.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/dialog.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/drawer.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/dropdown-menu.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/form.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/hover-card.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/input-otp.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/input.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/label.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/menubar.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/navigation-menu.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/pagination.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/popover.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/progress.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/radio-group.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/resizable.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/scroll-area.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/select.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/separator.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/sheet.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/sidebar.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/skeleton.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/slider.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/sonner.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/switch.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/table.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/tabs.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/textarea.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/toggle-group.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/toggle.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/tooltip.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/use-mobile.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/components/ui/utils.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/constants/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/contexts/AuthContext.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/contexts/LanguageContext.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/data/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/data/api-mock.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/data/mockData.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/data/themes.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/hooks/useApi.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/lib/mockDataUtils.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/lib/utils.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/pages/AccessibilityPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/pages/AssembliesPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/pages/CivoxLandingPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/pages/ConferencesPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/pages/ConsultationDetailPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/pages/ConsultationsPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/pages/CookiesPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/pages/Dashboard.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/pages/FAQPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/pages/ForgotPasswordPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/pages/GuidesPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/pages/HowItWorksPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/pages/LegalNoticePage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/pages/LoginPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/pages/NewsletterPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/pages/OrganizationDetailPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/pages/OrganizationDirectoryPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/pages/OrganizationRequestPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/pages/PetitionDetailPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/pages/PetitionsPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/pages/PrivacyPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/pages/ProfilePage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/pages/ProposeIdeaPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/pages/RegisterPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/pages/ResetPassword.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/pages/ResourcesPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/pages/SearchResultsPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/pages/SettingsPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/pages/SpeakerDetailPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/pages/SupportPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/pages/TermsPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/pages/ThemeDetailPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/pages/ThemesPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/pages/VoteDetailPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/pages/VotesPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/saas/components/OrganizationWizard.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/saas/components/SaasLayout.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/saas/pages/AuditPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/saas/pages/ModulesPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/saas/pages/OrganizationRequestsPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/saas/pages/OrganizationUsersPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/saas/pages/OrganizationsPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/saas/pages/SaasDashboard.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/saas/pages/SettingsPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/saas/pages/StatisticsPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/saas/pages/UsersPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/services/api.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/types/exports.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/app/types/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/main.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/styles/fonts.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/styles/index.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/styles/tailwind.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/src/styles/theme.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CiviAgora/vite.config.ts" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -20,7 +212,7 @@
     </option>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
     <option name="RESET_MODE" value="KEEP" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
@@ -59,35 +251,36 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "Application.SpringApp.executor": "Run",
-    "RequestMappingsPanelOrder0": "0",
-    "RequestMappingsPanelOrder1": "1",
-    "RequestMappingsPanelWidth0": "75",
-    "RequestMappingsPanelWidth1": "75",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "Spring Boot.civiAgoraApplication.executor": "Run",
-    "Spring Boot.eventApplication.executor": "Run",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/MSI/Downloads/Bouabdallah-Yassine-Lot1-Backend-main/Bouabdallah-Yassine-Lot1-Backend-main",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Project",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.5804598",
-    "run.code.analysis.last.selected.profile": "pProject Default",
-    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;Application.SpringApp.executor&quot;: &quot;Run&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;Spring Boot.civiAgoraApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.eventApplication.executor&quot;: &quot;Run&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/MSI/OneDrive/Bureau/CiviAgoraBackEnd/CiviAgora-Backend&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.5804598&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;project.propVCSSupport.DirectoryMappings&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected="Spring Boot.civiAgoraApplication">
     <configuration name="SpringApp" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="tn.esprit.tic.civiAgora.civiAgoraApplication" />
@@ -114,6 +307,8 @@
       <updated>1712117563288</updated>
       <workItem from="1768052790640" duration="40257000" />
       <workItem from="1768301741850" duration="167000" />
+      <workItem from="1774538327424" duration="20000" />
+      <workItem from="1774538487932" duration="13000" />
     </task>
     <task id="LOCAL-00001" summary="all functions implementations">
       <option name="closed" value="true" />

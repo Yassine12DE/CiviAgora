@@ -1,0 +1,12 @@
+tn\esprit\tic\civiAgora\mappers\organizationRequestMappers\OrganizationRequestMapper.class
+tn\esprit\tic\civiAgora\config\TenantContext.class
+tn\esprit\tic\civiAgora\dto\organizationRequestDto\OrganizationRequestDto$OrganizationRequestDtoBuilder.class
+tn\esprit\tic\civiAgora\controller\PublicController.class
+tn\esprit\tic\civiAgora\dao\repository\OrganizationRequestRepository.class
+tn\esprit\tic\civiAgora\service\OrganizationRequestService.class
+tn\esprit\tic\civiAgora\dao\entity\OrganizationRequest.class
+tn\esprit\tic\civiAgora\dto\organizationRequestDto\OrganizationRequestDto.class
+tn\esprit\tic\civiAgora\config\TenantResolutionFilter.class
+tn\esprit\tic\civiAgora\dao\entity\OrganizationRequest$OrganizationRequestBuilder.class
+tn\esprit\tic\civiAgora\controller\saas\OrganizationRequestController.class
+tn\esprit\tic\civiAgora\dao\entity\enums\OrganizationRequestStatus.class

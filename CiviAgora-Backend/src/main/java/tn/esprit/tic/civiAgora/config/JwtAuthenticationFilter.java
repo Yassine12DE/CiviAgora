@@ -77,6 +77,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             if (jwtService.isTokenValid(jwt, userDetails) && isTokenValidInDb) {
 
+                String tenantSlug = TenantContext.getCurrentOrganizationSlug();
+                if (tenantSlug != null && !tenantSlug.isBlank() && userDetails instanceof tn.esprit.tic.civiAgora.dao.entity.User userEntity) {
+                    if (userEntity.getOrganization() != null && userEntity.getOrganization().getSlug() != null) {
+                        if (!tenantSlug.equalsIgnoreCase(userEntity.getOrganization().getSlug())) {
+                            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                            return;
+                        }
+                    }
+                }
+
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(
                                 userDetails,

@@ -1,5 +1,8 @@
 package tn.esprit.tic.civiAgora.auth;
 
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.LockedException;
 import tn.esprit.tic.civiAgora.dao.entity.PasswordResetToken;
 import tn.esprit.tic.civiAgora.dao.entity.User;
 import tn.esprit.tic.civiAgora.service.EmailService;
@@ -51,10 +54,24 @@ public class AuthenticationController {
     }
 
     @PostMapping("login")
-    public ResponseEntity<AuthenticationResponse> authenticate(
-            @RequestBody AuthenticationRequest request
-    ) {
-        return ResponseEntity.ok(service.authenticate(request));
+    public ResponseEntity<?> authenticate(@RequestBody AuthenticationRequest request) {
+        try {
+            return ResponseEntity.ok(service.authenticate(request));
+        } catch (DisabledException | LockedException e) {
+            // Returns 403 Forbidden with the specific message (Org unavailable OR Suspended)
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("message", e.getMessage()));
+        } catch (BadCredentialsException e) {
+            // Returns 401 Unauthorized for wrong email/password
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("message", "Invalid email or password"));
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "An error occurred during login"));
+        }
     }
 
     @PostMapping("refresh-token")

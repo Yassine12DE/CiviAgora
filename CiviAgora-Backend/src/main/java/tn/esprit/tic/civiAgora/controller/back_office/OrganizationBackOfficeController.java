@@ -41,6 +41,7 @@ public class OrganizationBackOfficeController {
         );
     }
 
+    // TEST
     @GetMapping("/settings")
     public ResponseEntity<OrganizationSettingsDto> getSettings(@PathVariable Integer organizationId) {
         return ResponseEntity.ok(organizationSettingsService.getSettingsByOrganizationId(organizationId));

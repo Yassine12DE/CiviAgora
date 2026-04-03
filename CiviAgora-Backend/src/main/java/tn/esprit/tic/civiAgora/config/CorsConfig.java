@@ -14,11 +14,15 @@ public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:5173")
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH")
+                .allowedOriginPatterns(
+                        "http://*.lvh.me:5173",
+                        "http://lvh.me:5173",
+                        "http://192.168.100.26:5173")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true);
     }
+
     @Bean
     public JavaMailSender getJavaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
@@ -26,7 +30,7 @@ public class CorsConfig implements WebMvcConfigurer {
         mailSender.setPort(587);
 
         mailSender.setUsername("technologybri@gmail.com");
-        mailSender.setPassword("lbrl tfng hbhv kiqj");
+        mailSender.setPassword("YOUR_APP_PASSWORD");
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");

@@ -32,15 +32,30 @@ public class SecurityConfiguration {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/auth/**",
+                                "/auth/login",
+                                "/auth/register",
+                                "/auth/saas-login",
+                                "/auth/refresh-token",
+                                "/auth/verifyMail/**",
+                                "/auth/forgot-password/**",
+                                "/auth/reset-password",
                                 "/public/**",
-                                "/saas/**",
-                                "/org/**"
+                                "/error"
                         ).permitAll()
+                        .requestMatchers("/saas/**").hasAuthority("SUPER_ADMIN")
+                        .requestMatchers("/org/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint((request, response, authException) ->
+                                response.sendError(401, "Unauthorized")
+                        )
+                        .accessDeniedHandler((request, response, accessDeniedException) ->
+                                response.sendError(403, "Forbidden")
+                        )
                 )
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(tenantResolutionFilter, UsernamePasswordAuthenticationFilter.class)

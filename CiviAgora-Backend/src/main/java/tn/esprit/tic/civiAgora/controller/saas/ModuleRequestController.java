@@ -22,16 +22,16 @@ public class ModuleRequestController {
 
     @PostMapping("/{requestId}/approve")
     public ResponseEntity<ModuleRequestDto> approveRequest(
-            @PathVariable Long requestId,
-            @RequestParam(required = false) String comment
+            @PathVariable("requestId") Long requestId,
+            @RequestParam(value = "comment", required = false) String comment
     ) {
         return ResponseEntity.ok(moduleRequestService.approveRequest(requestId, comment));
     }
 
     @PostMapping("/{requestId}/reject")
     public ResponseEntity<ModuleRequestDto> rejectRequest(
-            @PathVariable Long requestId,
-            @RequestParam(required = false) String comment
+            @PathVariable("requestId") Long requestId,
+            @RequestParam(value = "comment", required = false) String comment
     ) {
         return ResponseEntity.ok(moduleRequestService.rejectRequest(requestId, comment));
     }

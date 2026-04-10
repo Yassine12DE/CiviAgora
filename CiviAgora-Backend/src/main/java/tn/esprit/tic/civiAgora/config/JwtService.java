@@ -7,6 +7,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import tn.esprit.tic.civiAgora.dao.entity.User;
 
 import java.security.Key;
 import java.util.Date;
@@ -39,14 +40,16 @@ public class JwtService {
             Map<String, Object> extraClaims,
             UserDetails userDetails
     ) {
-        extraClaims.put("role",userDetails.getAuthorities().toArray()[0].toString());
+        enrichClaimsWithUserContext(extraClaims, userDetails);
         return buildToken(extraClaims, userDetails, jwtExpiration);
     }
 
     public String generateRefreshToken(
             UserDetails userDetails
     ) {
-        return buildToken(new HashMap<>(), userDetails, refreshExpiration);
+        Map<String, Object> claims = new HashMap<>();
+        enrichClaimsWithUserContext(claims, userDetails);
+        return buildToken(claims, userDetails, refreshExpiration);
     }
 
     private String buildToken(
@@ -89,5 +92,24 @@ public class JwtService {
     private Key getSignInKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    private void enrichClaimsWithUserContext(Map<String, Object> claims, UserDetails userDetails) {
+        claims.put("role", userDetails.getAuthorities().toArray()[0].toString());
+
+        if (userDetails instanceof User user) {
+            claims.put("userId", user.getId());
+            claims.put("email", user.getEmail());
+            claims.put("organizationId", user.getOrganization() != null ? user.getOrganization().getId() : null);
+            claims.put("organizationSlug", user.getOrganization() != null ? user.getOrganization().getSlug() : null);
+        }
+    }
+
+    public String extractOrganizationSlug(String token) {
+        return extractClaim(token, claims -> claims.get("organizationSlug", String.class));
+    }
+
+    public Integer extractOrganizationId(String token) {
+        return extractClaim(token, claims -> claims.get("organizationId", Integer.class));
     }
 }

@@ -18,16 +18,18 @@ public class SaasOrganizationModuleController {
 
     @GetMapping
     //@PreAuthorize("hasAuthority('SUPER_ADMIN')")
-    public ResponseEntity<List<OrganizationModuleDto>> getOrganizationModules(@PathVariable Integer organizationId) {
+    public ResponseEntity<List<OrganizationModuleDto>> getOrganizationModules(
+            @PathVariable("organizationId") Integer organizationId
+    ) {
         return ResponseEntity.ok(organizationModuleService.getAllModulesForOrganization(organizationId));
     }
 
     @PostMapping("/{moduleCode}")
     //@PreAuthorize("hasAuthority('SUPER_ADMIN')")
     public ResponseEntity<OrganizationModuleDto> grantModule(
-            @PathVariable Integer organizationId,
-            @PathVariable String moduleCode,
-            @RequestParam(required = false) Integer displayOrder
+            @PathVariable("organizationId") Integer organizationId,
+            @PathVariable("moduleCode") String moduleCode,
+            @RequestParam(value = "displayOrder", required = false) Integer displayOrder
     ) {
         return ResponseEntity.ok(
                 organizationModuleService.grantModuleToOrganization(organizationId, moduleCode, displayOrder)
@@ -37,8 +39,8 @@ public class SaasOrganizationModuleController {
     @DeleteMapping("/{moduleCode}")
     //@PreAuthorize("hasAuthority('SUPER_ADMIN')")
     public ResponseEntity<String> removeGrantedModule(
-            @PathVariable Integer organizationId,
-            @PathVariable String moduleCode
+            @PathVariable("organizationId") Integer organizationId,
+            @PathVariable("moduleCode") String moduleCode
     ) {
         organizationModuleService.removeGrantedModule(organizationId, moduleCode);
         return ResponseEntity.ok("Module removed successfully");

@@ -3,9 +3,14 @@ package tn.esprit.tic.civiAgora.auth;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
+import org.springframework.security.core.Authentication;
+import tn.esprit.tic.civiAgora.dao.entity.Organization;
 import tn.esprit.tic.civiAgora.dao.entity.PasswordResetToken;
 import tn.esprit.tic.civiAgora.dao.entity.User;
+import tn.esprit.tic.civiAgora.dto.usersDto.CurrentUserProfileDto;
+import tn.esprit.tic.civiAgora.dto.usersDto.UpdateCurrentUserProfileRequest;
 import tn.esprit.tic.civiAgora.service.EmailService;
+import tn.esprit.tic.civiAgora.service.TenantAccessService;
 import tn.esprit.tic.civiAgora.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -28,6 +33,8 @@ public class AuthenticationController {
     private UserService userService;
     @Autowired
     private EmailService emailService;
+    @Autowired
+    private TenantAccessService tenantAccessService;
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
@@ -74,6 +81,25 @@ public class AuthenticationController {
         }
     }
 
+    @PostMapping("saas-login")
+    public ResponseEntity<?> authenticateSaas(@RequestBody AuthenticationRequest request) {
+        try {
+            return ResponseEntity.ok(service.authenticateSaas(request));
+        } catch (DisabledException | LockedException e) {
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("message", e.getMessage()));
+        } catch (BadCredentialsException e) {
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("message", "Invalid email or password"));
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "An error occurred during SaaS login"));
+        }
+    }
+
     @PostMapping("refresh-token")
     public void refreshToken(
             HttpServletRequest request,
@@ -93,7 +119,7 @@ public class AuthenticationController {
     }
 
     @GetMapping("forgot-password/{email}")
-    public ResponseEntity<?> sendResetMail(@PathVariable String email) {
+    public ResponseEntity<?> sendResetMail(@PathVariable("email") String email) {
         try {
             // 1️⃣ Get user by email
             User user = userService.getUserByEmail(email);
@@ -236,6 +262,68 @@ public class AuthenticationController {
         } catch (Exception e) {
             return ResponseEntity.status(400).body(e.getMessage());
         }
+    }
+
+    @GetMapping("me")
+    public ResponseEntity<?> me(Authentication authentication) {
+        if (authentication == null || !(authentication.getPrincipal() instanceof User user)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("message", "Unauthorized"));
+        }
+
+        tenantAccessService.assertTenantMatchOrThrow();
+        return ResponseEntity.ok(toCurrentUserProfileDto(user));
+    }
+
+    @PutMapping("me")
+    public ResponseEntity<?> updateMe(
+            Authentication authentication,
+            @RequestBody UpdateCurrentUserProfileRequest request
+    ) {
+        if (authentication == null || !(authentication.getPrincipal() instanceof User user)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("message", "Unauthorized"));
+        }
+
+        User updatedUser;
+        if (tenantAccessService.isCurrentUserSuperAdmin()) {
+            updatedUser = userService.updateCurrentSuperAdminProfile(user.getId(), request);
+        } else {
+            Integer organizationId = tenantAccessService.getCurrentOrganizationEntityOrThrow().getId();
+            updatedUser = userService.updateCurrentUserProfile(user.getId(), organizationId, request);
+        }
+
+        return ResponseEntity.ok(toCurrentUserProfileDto(updatedUser));
+    }
+
+    private CurrentUserProfileDto toCurrentUserProfileDto(User user) {
+        Organization organization = tenantAccessService.getCurrentOrganizationEntityOrThrow();
+
+        return CurrentUserProfileDto.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .phone(user.getPhone())
+                .birthDate(user.getBirthDate())
+                .role(user.getRole() != null ? user.getRole().name() : null)
+                .enabled(user.getEnabled())
+                .archived(user.getArchived())
+                .accountStatus(resolveAccountStatus(user))
+                .organizationId(organization.getId())
+                .organizationSlug(organization.getSlug())
+                .organizationName(organization.getName())
+                .build();
+    }
+
+    private String resolveAccountStatus(User user) {
+        if (Boolean.TRUE.equals(user.getArchived())) {
+            return "ARCHIVED";
+        }
+        if (Boolean.TRUE.equals(user.getEnabled())) {
+            return "ACTIVE";
+        }
+        return "DISABLED";
     }
 
 }

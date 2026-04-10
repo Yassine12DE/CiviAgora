@@ -51,15 +51,15 @@ public class TenantResolutionFilter extends OncePerRequestFilter {
                 try {
                     Organization organization = organizationService.getOrganizationBySlug(orgSlug);
                     if (organization != null) {
-                        TenantContext.setCurrentOrganizationSlug(organization.getSlug());
+                        TenantContext.setResolvedOrganization(organization.getId(), organization.getSlug());
                     } else {
-                        TenantContext.clear();
+                        TenantContext.clearResolvedTenant();
                     }
                 } catch (Exception e) {
-                    TenantContext.clear();
+                    TenantContext.clearResolvedTenant();
                 }
             } else {
-                TenantContext.clear();
+                TenantContext.clearResolvedTenant();
             }
 
             filterChain.doFilter(request, response);
@@ -70,8 +70,8 @@ public class TenantResolutionFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        // public and auth endpoints don't need tenant evaluation
         String path = request.getServletPath();
-        return path.startsWith("/auth") || path.startsWith("/public");
+
+        return path.equals("/error");
     }
 }

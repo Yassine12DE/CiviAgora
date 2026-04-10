@@ -6,10 +6,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import tn.esprit.tic.civiAgora.dao.entity.Organization;
+import tn.esprit.tic.civiAgora.dao.entity.OrganizationSettings;
 import tn.esprit.tic.civiAgora.dao.entity.User;
 import tn.esprit.tic.civiAgora.dao.entity.enums.OrganizationStatus;
 import tn.esprit.tic.civiAgora.dao.entity.enums.Role;
 import tn.esprit.tic.civiAgora.dao.repository.OrganizationRepository;
+import tn.esprit.tic.civiAgora.dao.repository.OrganizationSettingsRepository;
 import tn.esprit.tic.civiAgora.dao.repository.UserRepository;
 
 import java.time.LocalDateTime;
@@ -18,7 +20,6 @@ import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
-
 public class DataInitializer {
 
     private final PasswordEncoder passwordEncoder;
@@ -26,7 +27,8 @@ public class DataInitializer {
     @Bean
     CommandLineRunner seedDatabase(
             OrganizationRepository organizationRepository,
-            UserRepository userRepository
+            UserRepository userRepository,
+            OrganizationSettingsRepository organizationSettingsRepository
     ) {
         return args -> {
 
@@ -62,7 +64,48 @@ public class DataInitializer {
                 organizations.add(org);
             }
 
-            /* ===================== 10 USERS ===================== */
+            /* ===================== ORGANIZATION SETTINGS ===================== */
+
+            String[][] colors = {
+                    {"#1E3A8A", "#60A5FA"},
+                    {"#0F766E", "#2DD4BF"},
+                    {"#7C3AED", "#A78BFA"},
+                    {"#B45309", "#F59E0B"},
+                    {"#BE123C", "#FB7185"},
+                    {"#166534", "#4ADE80"},
+                    {"#1D4ED8", "#93C5FD"},
+                    {"#6D28D9", "#C4B5FD"},
+                    {"#0F172A", "#64748B"},
+                    {"#9A3412", "#FDBA74"}
+            };
+
+            for (int i = 0; i < organizations.size(); i++) {
+                Organization org = organizations.get(i);
+
+                boolean settingsExist = organizationSettingsRepository
+                        .findByOrganizationId(org.getId())
+                        .isPresent();
+
+                if (settingsExist) {
+                    continue;
+                }
+
+                OrganizationSettings settings = OrganizationSettings.builder()
+                        .organization(org)
+                        .logoUrl("https://dummyimage.com/200x200/ffffff/000000&text=ORG+" + (i + 1))
+                        .primaryColor(colors[i][0])
+                        .secondaryColor(colors[i][1])
+                        .homeTitle("Welcome to " + org.getName())
+                        .welcomeText("This is the official workspace of " + org.getName() + ". Access your modules, updates, and organization services here.")
+                        .bannerImageUrl("https://dummyimage.com/1200x300/" +
+                                colors[i][0].replace("#", "") + "/ffffff&text=" + org.getSlug())
+                        .footerText("© 2026 " + org.getName() + " - Powered by Civox")
+                        .build();
+
+                organizationSettingsRepository.save(settings);
+            }
+
+            /* ===================== 20 USERS ===================== */
 
             Role[] roles = {
                     Role.SUPER_ADMIN,
@@ -100,7 +143,7 @@ public class DataInitializer {
                 userRepository.save(user);
             }
 
-            System.out.println("✅ 10 organizations + 20 users safely added");
+            System.out.println("✅ 10 organizations + organization settings + 20 users safely added");
         };
     }
 }

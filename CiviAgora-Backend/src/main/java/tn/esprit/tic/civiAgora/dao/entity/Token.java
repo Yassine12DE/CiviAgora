@@ -18,8 +18,9 @@ public class Token {
     @GeneratedValue
     public Integer id;
 
-    @Column(unique = true)
-    public String token;
+    @Lob
+    @Column(nullable = false, columnDefinition = "LONGTEXT")
+    private String token;
 
     @Enumerated(EnumType.STRING)
     public TokenType tokenType = TokenType.BEARER;

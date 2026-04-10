@@ -4,11 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tn.esprit.tic.civiAgora.dao.entity.Organization;
 import tn.esprit.tic.civiAgora.dao.entity.OrganizationRequest;
+import tn.esprit.tic.civiAgora.dao.entity.OrganizationSettings;
 import tn.esprit.tic.civiAgora.dao.entity.User;
 import tn.esprit.tic.civiAgora.dao.entity.enums.OrganizationStatus;
 import tn.esprit.tic.civiAgora.dao.repository.OrganizationRepository;
+import tn.esprit.tic.civiAgora.dao.repository.OrganizationSettingsRepository;
 import tn.esprit.tic.civiAgora.dao.repository.UserRepository;
 import tn.esprit.tic.civiAgora.dto.organizationDto.OrganizationDto;
+import tn.esprit.tic.civiAgora.dto.organizationSettingsDto.PublicOrganizationBrandingDto;
 import tn.esprit.tic.civiAgora.mappers.organizationMappers.OrganizationMapper;
 
 import java.time.LocalDateTime;
@@ -30,6 +33,10 @@ public class OrganizationService {
     @Autowired
     private OrganizationSettingsService organizationSettingsService ;
 
+    @Autowired
+    private OrganizationSettingsRepository organizationSettingsRepository;
+    @Autowired
+    private TenantAccessService tenantAccessService;
 
     public List<OrganizationDto> getAllOrganizations() {
         return organizationRepository.findAll().stream()
@@ -75,10 +82,13 @@ public class OrganizationService {
         organizationRepository.delete(org);
     }
     public List<User> getUsersByOrganizationId(Integer organizationId) {
-        Organization org = organizationRepository.findById(organizationId)
-                .orElseThrow(() -> new RuntimeException("Organization not found"));
+        getOrganizationById(organizationId);
+        return userRepository.findByOrganizationId(organizationId);
+    }
 
-        return org.getUsers(); // returns the list of users in that organization
+    public List<User> getUsersByTenantOrganizationId(Integer organizationId) {
+        tenantAccessService.assertOrganizationAccessOrThrow(organizationId);
+        return userRepository.findByOrganizationId(organizationId);
     }
 
 
@@ -176,6 +186,36 @@ public class OrganizationService {
         Organization org = getOrganizationBySlug(slug);
         int usersCount = (int) userRepository.countUsersByOrganization(org.getId());
         return organizationMapper.toOrganizationDto(org, usersCount);
+    }
+
+    public PublicOrganizationBrandingDto getCurrentOrganizationBranding() {
+        Organization org = tenantAccessService.getResolvedOrganizationOrThrow();
+
+        OrganizationSettings settings = organizationSettingsRepository
+                .findByOrganizationId(org.getId())
+                .orElse(null);
+
+        return PublicOrganizationBrandingDto.builder()
+                .id(org.getId())
+                .name(org.getName())
+                .slug(org.getSlug())
+                .status(org.getStatus() != null ? org.getStatus().name().toLowerCase() : null)
+                .createdAt(org.getCreatedAt() != null ? org.getCreatedAt().toLocalDate().toString() : null)
+                .usersCount(org.getUsersCount())
+                .processesCount(org.getProcessesCount())
+                .email(org.getEmail())
+                .phone(org.getPhone())
+                .address(org.getAddress())
+                .description(org.getDescription())
+
+                .logoUrl(settings != null ? settings.getLogoUrl() : null)
+                .primaryColor(settings != null ? settings.getPrimaryColor() : null)
+                .secondaryColor(settings != null ? settings.getSecondaryColor() : null)
+                .homeTitle(settings != null ? settings.getHomeTitle() : null)
+                .welcomeText(settings != null ? settings.getWelcomeText() : null)
+                .bannerImageUrl(settings != null ? settings.getBannerImageUrl() : null)
+                .footerText(settings != null ? settings.getFooterText() : null)
+                .build();
     }
 
 }

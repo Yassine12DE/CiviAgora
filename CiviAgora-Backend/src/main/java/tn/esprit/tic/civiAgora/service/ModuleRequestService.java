@@ -23,6 +23,7 @@ public class ModuleRequestService {
     private final ModuleService moduleService;
     private final OrganizationModuleService organizationModuleService;
     private final ModuleRequestMapper moduleRequestMapper;
+    private final TenantAccessService tenantAccessService;
 
     public List<ModuleRequestDto> getAllRequests() {
         return moduleRequestRepository.findAll()
@@ -36,6 +37,11 @@ public class ModuleRequestService {
                 .stream()
                 .map(moduleRequestMapper::toDto)
                 .toList();
+    }
+
+    public List<ModuleRequestDto> getTenantRequestsByOrganization(Integer organizationId) {
+        tenantAccessService.assertOrganizationAccessOrThrow(organizationId);
+        return getRequestsByOrganization(organizationId);
     }
 
     public List<ModuleRequestDto> getRequestsByStatus(ModuleRequestStatus status) {
@@ -55,6 +61,26 @@ public class ModuleRequestService {
                 .orElseThrow(() -> new RuntimeException("Organization not found"));
         Module module = moduleService.getModuleByCode(moduleCode);
 
+        ModuleRequest request = ModuleRequest.builder()
+                .organization(organization)
+                .module(module)
+                .status(ModuleRequestStatus.PENDING)
+                .requestDate(LocalDateTime.now())
+                .comment(comment)
+                .build();
+
+        return moduleRequestMapper.toDto(moduleRequestRepository.save(request));
+    }
+
+    public ModuleRequestDto createTenantRequest(Integer organizationId, String moduleCode, String comment) {
+        Organization organization = tenantAccessService.assertOrganizationAccessOrThrow(organizationId);
+
+        if (moduleRequestRepository.existsByOrganizationIdAndModuleCodeAndStatus(
+                organization.getId(), moduleCode, ModuleRequestStatus.PENDING)) {
+            throw new RuntimeException("A pending request already exists for this module");
+        }
+
+        Module module = moduleService.getModuleByCode(moduleCode);
         ModuleRequest request = ModuleRequest.builder()
                 .organization(organization)
                 .module(module)

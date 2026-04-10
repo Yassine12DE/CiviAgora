@@ -3,6 +3,7 @@ package tn.esprit.tic.civiAgora.auth;
 
 import org.springframework.security.authentication.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import tn.esprit.tic.civiAgora.dao.entity.Organization;
 import tn.esprit.tic.civiAgora.dao.entity.enums.Role;
 import tn.esprit.tic.civiAgora.dao.entity.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,9 +18,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import tn.esprit.tic.civiAgora.service.TenantAccessService;
 import tn.esprit.tic.civiAgora.dto.usersDto.UserProfileDto;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -27,11 +31,12 @@ public class AuthenticationService  {
 
     private final UserRepository repository;
     private final TokenRepository tokenRepository;
-//    private final PasswordEncoder passwordEncoder;
+
 
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final TenantAccessService tenantAccessService;
 
 
 
@@ -73,31 +78,30 @@ public class AuthenticationService  {
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        // 1. Fetch User by Email first to check status flags
-        var user = repository.findByEmail(request.getEmail())
+        Organization resolvedOrganization = tenantAccessService.getResolvedOrganizationOrThrow();
+
+        User user = repository.findByEmailAndOrganizationId(request.getEmail(), resolvedOrganization.getId())
+                .or(() -> repository.findByEmail(request.getEmail())
+                        .filter(candidate -> candidate.getRole() == Role.SUPER_ADMIN))
                 .orElseThrow(() -> new BadCredentialsException("Invalid credentials"));
 
-        // 2. Check Custom Conditions: user and organization state
-        if (user.getOrganization() != null) {
-            if (user.getOrganization().getStatus() == null || user.getOrganization().getStatus() != tn.esprit.tic.civiAgora.dao.entity.enums.OrganizationStatus.ACTIVE) {
+        boolean isSuperAdmin = user.getRole() == Role.SUPER_ADMIN;
+
+        if (!isSuperAdmin && user.getOrganization() != null) {
+            if (user.getOrganization().getStatus() == null
+                    || user.getOrganization().getStatus() != tn.esprit.tic.civiAgora.dao.entity.enums.OrganizationStatus.ACTIVE) {
                 throw new DisabledException("Your organization is not active or not yet approved.");
             }
         }
 
-        // Condition A: Not enabled AND Not archived -> "Organization not available"
-        if (!user.isEnabled() && !user.getArchived()) {
+        if (!isSuperAdmin && !user.isEnabled() && !user.getArchived()) {
             throw new DisabledException("Your organization is not available now");
         }
 
-        // Condition B: Enabled AND Archived -> "Account suspended"
-        if (user.isEnabled() && user.getArchived()) {
+        if (Boolean.TRUE.equals(user.getArchived())) {
             throw new LockedException("Your account is suspended contact the support");
         }
 
-        // (Optional) You might want to handle !enabled && archived here too,
-        // otherwise AuthenticationManager might throw a generic "User is disabled" error.
-
-        // 3. Verify Password using AuthenticationManager
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
@@ -105,8 +109,37 @@ public class AuthenticationService  {
                 )
         );
 
-        // 4. Generate Tokens
-        var jwtToken = jwtService.generateToken(user);
+        return issueAuthenticationResponse(user);
+    }
+
+    public AuthenticationResponse authenticateSaas(AuthenticationRequest request) {
+        User user = repository.findByEmail(request.getEmail())
+                .filter(candidate -> candidate.getRole() == Role.SUPER_ADMIN)
+                .orElseThrow(() -> new BadCredentialsException("Invalid credentials"));
+
+        if (user.getArchived()) {
+            throw new LockedException("Your account is suspended contact the support");
+        }
+
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getPassword()
+                )
+        );
+
+        return issueAuthenticationResponse(user);
+    }
+
+    private AuthenticationResponse issueAuthenticationResponse(User user) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", user.getId());
+        claims.put("email", user.getEmail());
+        claims.put("role", user.getRole().name());
+        claims.put("organizationId", user.getOrganization() != null ? user.getOrganization().getId() : null);
+        claims.put("organizationSlug", user.getOrganization() != null ? user.getOrganization().getSlug() : null);
+
+        var jwtToken = jwtService.generateToken(claims, user);
         var refreshToken = jwtService.generateRefreshToken(user);
         revokeAllUserTokens(user);
         saveUserToken(user, jwtToken);

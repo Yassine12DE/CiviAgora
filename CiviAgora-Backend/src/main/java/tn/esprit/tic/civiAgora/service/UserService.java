@@ -9,11 +9,14 @@ import tn.esprit.tic.civiAgora.dao.repository.OrganizationRepository;
 import tn.esprit.tic.civiAgora.dao.repository.PasswordResetTokenRepository;
 import tn.esprit.tic.civiAgora.dao.repository.UserRepository;
 import tn.esprit.tic.civiAgora.dto.usersDto.BackOfficeSAASUserDto;
+import tn.esprit.tic.civiAgora.dto.usersDto.TenantUserRequest;
+import tn.esprit.tic.civiAgora.dto.usersDto.UpdateCurrentUserProfileRequest;
 import tn.esprit.tic.civiAgora.dto.usersDto.UserProfileDto;
 import tn.esprit.tic.civiAgora.mappers.usersMapper.BackOfficeSAASUserMapper;
 import tn.esprit.tic.civiAgora.mappers.usersMapper.UserProfileMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -92,6 +95,85 @@ public class UserService {
         }
 
         return userRepository.save(user);
+    }
+
+    public User updateCurrentUserProfile(Integer userId, Integer organizationId, UpdateCurrentUserProfileRequest request) {
+        User user = userRepository.findByIdAndOrganizationId(userId, organizationId)
+                .orElseThrow(() -> new RuntimeException("Current user profile not found"));
+
+        applyCurrentProfileUpdate(user, request);
+        return userRepository.save(user);
+    }
+
+    public User updateCurrentSuperAdminProfile(Integer userId, UpdateCurrentUserProfileRequest request) {
+        User user = userRepository.findById(userId)
+                .filter(candidate -> candidate.getRole() == Role.SUPER_ADMIN)
+                .orElseThrow(() -> new RuntimeException("Current super admin profile not found"));
+
+        applyCurrentProfileUpdate(user, request);
+        return userRepository.save(user);
+    }
+
+    private void applyCurrentProfileUpdate(User user, UpdateCurrentUserProfileRequest request) {
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
+        user.setPhone(request.getPhone());
+        user.setBirthDate(request.getBirthDate());
+    }
+
+    public List<User> getTenantUsers(Integer organizationId) {
+        return userRepository.findByOrganizationId(organizationId);
+    }
+
+    public User createTenantUser(Integer organizationId, TenantUserRequest request, User actor) {
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new IllegalStateException("Email already in use");
+        }
+
+        Organization organization = organizationRepository.findById(organizationId)
+                .orElseThrow(() -> new RuntimeException("Organization not found"));
+        Role requestedRole = resolveTenantAssignableRole(request.getRole());
+
+        if (!canCreateRole(actor, requestedRole)) {
+            throw new AccessDeniedException("This role cannot create the requested user role");
+        }
+
+        if (request.getPassword() == null || request.getPassword().isBlank()) {
+            throw new IllegalArgumentException("Password is required");
+        }
+
+        User user = User.builder()
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .email(request.getEmail())
+                .phone(request.getPhone())
+                .birthDate(request.getBirthDate())
+                .enabled(true)
+                .archived(false)
+                .password(passwordEncoder.encode(request.getPassword()))
+                .role(requestedRole)
+                .organization(organization)
+                .build();
+
+        User savedUser = userRepository.save(user);
+        updateUsersCount(organizationId);
+        return savedUser;
+    }
+
+    public User setTenantUserArchived(Integer organizationId, Integer userId, Boolean archived, User actor) {
+        User target = userRepository.findByIdAndOrganizationId(userId, organizationId)
+                .orElseThrow(() -> new RuntimeException("User not found in this organization"));
+
+        if (actor.getId().equals(target.getId())) {
+            throw new AccessDeniedException("You cannot archive your own account from user management");
+        }
+
+        if (!canManageTargetUser(actor, target)) {
+            throw new AccessDeniedException("This role cannot manage the selected user");
+        }
+
+        target.setArchived(Boolean.TRUE.equals(archived));
+        return userRepository.save(target);
     }
 
     public void deleteUser(Integer id) throws Exception {
@@ -174,6 +256,47 @@ public class UserService {
         organizationRepository.save(org);
     }
 
+    private Role resolveTenantAssignableRole(String rawRole) {
+        if (rawRole == null || rawRole.isBlank()) {
+            return Role.CITIZEN;
+        }
+
+        Role role = Role.valueOf(rawRole.trim().toUpperCase());
+        return switch (role) {
+            case ADMIN, MANAGER, MODERATOR, CITIZEN -> role;
+            case SUPER_ADMIN, OBSERVER -> throw new AccessDeniedException("This role cannot be assigned in tenant user management");
+        };
+    }
+
+    private boolean canCreateRole(User actor, Role requestedRole) {
+        if (actor == null || actor.getRole() == null || requestedRole == null) {
+            return false;
+        }
+        if (actor.getRole() == Role.SUPER_ADMIN || actor.getRole() == Role.ADMIN) {
+            return requestedRole != Role.SUPER_ADMIN;
+        }
+        if (actor.getRole() == Role.MANAGER) {
+            return requestedRole == Role.CITIZEN;
+        }
+        return false;
+    }
+
+    private boolean canManageTargetUser(User actor, User target) {
+        if (actor == null || target == null || actor.getRole() == null || target.getRole() == null) {
+            return false;
+        }
+        if (actor.getRole() == Role.SUPER_ADMIN) {
+            return true;
+        }
+        if (actor.getRole() == Role.ADMIN) {
+            return target.getRole() != Role.SUPER_ADMIN;
+        }
+        if (actor.getRole() == Role.MANAGER) {
+            return target.getRole() == Role.CITIZEN;
+        }
+        return false;
+    }
+
     public void createInitialAdminForOrganization(Organization organization, OrganizationRequest request) {
         if (organization == null || request == null || request.getContactEmail() == null) {
             return;
@@ -201,4 +324,3 @@ public class UserService {
         updateUsersCount(organization.getId());
     }
 }
-

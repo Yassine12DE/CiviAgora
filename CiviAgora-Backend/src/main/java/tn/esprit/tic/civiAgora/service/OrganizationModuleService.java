@@ -20,6 +20,7 @@ public class OrganizationModuleService {
     private final OrganizationRepository organizationRepository;
     private final ModuleService moduleService;
     private final OrganizationModuleMapper organizationModuleMapper;
+    private final TenantAccessService tenantAccessService;
 
     public List<OrganizationModuleDto> getAllModulesForOrganization(Integer organizationId) {
         return organizationModuleRepository.findByOrganizationId(organizationId)
@@ -34,6 +35,16 @@ public class OrganizationModuleService {
                 .stream()
                 .map(organizationModuleMapper::toDto)
                 .toList();
+    }
+
+    public List<OrganizationModuleDto> getVisibleModulesForCurrentOrganization() {
+        Organization organization = tenantAccessService.getResolvedOrganizationOrThrow();
+        return getVisibleModulesForOrganization(organization.getId());
+    }
+
+    public List<OrganizationModuleDto> getTenantModules(Integer organizationId) {
+        tenantAccessService.assertOrganizationAccessOrThrow(organizationId);
+        return getAllModulesForOrganization(organizationId);
     }
 
     public OrganizationModuleDto grantModuleToOrganization(Integer organizationId, String moduleCode, Integer displayOrder) {
@@ -74,6 +85,11 @@ public class OrganizationModuleService {
 
         organizationModule.setEnabledByOrganization(enabledByOrganization);
         return organizationModuleMapper.toDto(organizationModuleRepository.save(organizationModule));
+    }
+
+    public OrganizationModuleDto updateTenantModuleVisibilityForOrganization(Integer organizationId, String moduleCode, Boolean enabledByOrganization) {
+        tenantAccessService.assertOrganizationAccessOrThrow(organizationId);
+        return updateModuleVisibilityForOrganization(organizationId, moduleCode, enabledByOrganization);
     }
 
     public void removeGrantedModule(Integer organizationId, String moduleCode) {

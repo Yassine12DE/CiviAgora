@@ -26,7 +26,7 @@ public class PublicController {
     }
 
     @GetMapping("/organizations/{slug}")
-    public ResponseEntity<OrganizationDto> getOrganizationBySlug(@PathVariable String slug) {
+    public ResponseEntity<OrganizationDto> getOrganizationBySlug(@PathVariable("slug") String slug) {
         OrganizationDto dto = organizationService.getOrganizationDtoBySlug(slug);
         return ResponseEntity.ok(dto);
     }

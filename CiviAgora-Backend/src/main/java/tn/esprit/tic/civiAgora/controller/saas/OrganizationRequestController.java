@@ -30,14 +30,14 @@ public class OrganizationRequestController {
 
     @GetMapping("/{id}")
     //@PreAuthorize("hasAuthority('SUPER_ADMIN')")
-    public ResponseEntity<OrganizationRequestDto> getRequestById(@PathVariable Integer id) {
+    public ResponseEntity<OrganizationRequestDto> getRequestById(@PathVariable("id") Integer id) {
         return ResponseEntity.ok(requestService.getRequestById(id));
     }
 
     @PostMapping("/{id}/approve")
     //@PreAuthorize("hasAuthority('SUPER_ADMIN')")
     public ResponseEntity<OrganizationRequestDto> approveRequest(
-            @PathVariable Integer id,
+            @PathVariable("id") Integer id,
             @RequestParam(value = "reviewComment", required = false) String reviewComment,
             @RequestParam(value = "reviewedBy", required = false) String reviewedBy
     ) {
@@ -47,7 +47,7 @@ public class OrganizationRequestController {
     @PostMapping("/{id}/reject")
     //@PreAuthorize("hasAuthority('SUPER_ADMIN')")
     public ResponseEntity<OrganizationRequestDto> rejectRequest(
-            @PathVariable Integer id,
+            @PathVariable("id") Integer id,
             @RequestParam(value = "reviewComment", required = false) String reviewComment,
             @RequestParam(value = "reviewedBy", required = false) String reviewedBy
     ) {

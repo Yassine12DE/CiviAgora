@@ -32,7 +32,7 @@ public class OrganizationController {
     }
     // Get organization by ID
     @GetMapping("{id}")
-    public ResponseEntity<Organization> getOrganizationById(@PathVariable Integer id) {
+    public ResponseEntity<Organization> getOrganizationById(@PathVariable("id") Integer id) {
         return ResponseEntity.ok(organizationService.getOrganizationById(id));
     }
 
@@ -45,21 +45,21 @@ public class OrganizationController {
 
     // Update an existing organization
     @PutMapping("{id}")
-    public ResponseEntity<Organization> updateOrganization(@PathVariable Integer id,
+    public ResponseEntity<Organization> updateOrganization(@PathVariable("id") Integer id,
                                                            @RequestBody Organization organization) {
         return ResponseEntity.ok(organizationService.updateOrganization(id, organization));
     }
 
     // Delete an organization
     @DeleteMapping("{id}")
-    public ResponseEntity<String> deleteOrganization(@PathVariable Integer id) {
+    public ResponseEntity<String> deleteOrganization(@PathVariable("id") Integer id) {
         organizationService.deleteOrganization(id);
         return ResponseEntity.ok("Organization deleted successfully");
     }
     // Toggle organization status
     @PatchMapping("/{id}/toggle-status")
     public ResponseEntity<OrganizationDto> toggleOrganizationStatus(
-            @PathVariable Integer id) {
+            @PathVariable("id") Integer id) {
 
         return ResponseEntity.ok(
                 organizationService.toggleOrganizationStatus(id)
@@ -70,8 +70,8 @@ public class OrganizationController {
     // Add a user to an organization
     @PostMapping("{orgId}/users/{userId}")
     public ResponseEntity<UserToOrganizationDto> addUserToOrganization(
-            @PathVariable Integer orgId,
-            @PathVariable Integer userId) {
+            @PathVariable("orgId") Integer orgId,
+            @PathVariable("userId") Integer userId) {
 
         User user = userService.addUserToOrganization(userId, orgId);
         UserToOrganizationDto response = userToOrganizationMapper.toUserToOrganizationDto(user);
@@ -80,7 +80,7 @@ public class OrganizationController {
     }
     @GetMapping("{orgId}/users")
     public ResponseEntity<List<UserToOrganizationDto>> getUsersByOrganization(
-            @PathVariable Integer orgId) {
+            @PathVariable("orgId") Integer orgId) {
 
         List<User> users = organizationService.getUsersByOrganizationId(orgId);
 

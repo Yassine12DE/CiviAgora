@@ -9,6 +9,7 @@ import tn.esprit.tic.civiAgora.dto.organizationSettingsDto.OrganizationSettingsD
 import tn.esprit.tic.civiAgora.service.ModuleRequestService;
 import tn.esprit.tic.civiAgora.service.OrganizationModuleService;
 import tn.esprit.tic.civiAgora.service.OrganizationSettingsService;
+import tn.esprit.tic.civiAgora.service.RbacService;
 
 import java.util.List;
 
@@ -20,20 +21,25 @@ public class OrganizationBackOfficeController {
     private final OrganizationModuleService organizationModuleService;
     private final OrganizationSettingsService organizationSettingsService;
     private final ModuleRequestService moduleRequestService;
+    private final RbacService rbacService;
 
     @GetMapping("/modules")
-    public ResponseEntity<List<OrganizationModuleDto>> getGrantedModules(@PathVariable Integer organizationId) {
-        return ResponseEntity.ok(organizationModuleService.getAllModulesForOrganization(organizationId));
+    public ResponseEntity<List<OrganizationModuleDto>> getGrantedModules(
+            @PathVariable("organizationId") Integer organizationId
+    ) {
+        rbacService.requireTenantBackOfficeAccess(organizationId);
+        return ResponseEntity.ok(organizationModuleService.getTenantModules(organizationId));
     }
 
     @PatchMapping("/modules/{moduleCode}/visibility")
     public ResponseEntity<OrganizationModuleDto> updateModuleVisibility(
-            @PathVariable Integer organizationId,
-            @PathVariable String moduleCode,
-            @RequestParam Boolean enabled
+            @PathVariable("organizationId") Integer organizationId,
+            @PathVariable("moduleCode") String moduleCode,
+            @RequestParam("enabled") Boolean enabled
     ) {
+        rbacService.requireTenantModuleVisibilityAccess(organizationId);
         return ResponseEntity.ok(
-                organizationModuleService.updateModuleVisibilityForOrganization(
+                organizationModuleService.updateTenantModuleVisibilityForOrganization(
                         organizationId,
                         moduleCode,
                         enabled
@@ -41,33 +47,40 @@ public class OrganizationBackOfficeController {
         );
     }
 
-    // TEST
     @GetMapping("/settings")
-    public ResponseEntity<OrganizationSettingsDto> getSettings(@PathVariable Integer organizationId) {
-        return ResponseEntity.ok(organizationSettingsService.getSettingsByOrganizationId(organizationId));
+    public ResponseEntity<OrganizationSettingsDto> getSettings(
+            @PathVariable("organizationId") Integer organizationId
+    ) {
+        rbacService.requireTenantDesignCustomizationAccess(organizationId);
+        return ResponseEntity.ok(organizationSettingsService.getTenantSettings(organizationId));
     }
 
     @PutMapping("/settings")
     public ResponseEntity<OrganizationSettingsDto> updateSettings(
-            @PathVariable Integer organizationId,
+            @PathVariable("organizationId") Integer organizationId,
             @RequestBody OrganizationSettingsDto settings
     ) {
-        return ResponseEntity.ok(organizationSettingsService.updateSettings(organizationId, settings));
+        rbacService.requireTenantDesignCustomizationAccess(organizationId);
+        return ResponseEntity.ok(organizationSettingsService.updateTenantSettings(organizationId, settings));
     }
 
     @PostMapping("/module-requests/{moduleCode}")
     public ResponseEntity<ModuleRequestDto> createModuleRequest(
-            @PathVariable Integer organizationId,
-            @PathVariable String moduleCode,
-            @RequestParam(required = false) String comment
+            @PathVariable("organizationId") Integer organizationId,
+            @PathVariable("moduleCode") String moduleCode,
+            @RequestParam(value = "comment", required = false) String comment
     ) {
+        rbacService.requireTenantModuleRequestAccess(organizationId);
         return ResponseEntity.ok(
-                moduleRequestService.createRequest(organizationId, moduleCode, comment)
+                moduleRequestService.createTenantRequest(organizationId, moduleCode, comment)
         );
     }
 
     @GetMapping("/module-requests")
-    public ResponseEntity<List<ModuleRequestDto>> getOrganizationRequests(@PathVariable Integer organizationId) {
-        return ResponseEntity.ok(moduleRequestService.getRequestsByOrganization(organizationId));
+    public ResponseEntity<List<ModuleRequestDto>> getOrganizationRequests(
+            @PathVariable("organizationId") Integer organizationId
+    ) {
+        rbacService.requireTenantModuleRequestAccess(organizationId);
+        return ResponseEntity.ok(moduleRequestService.getTenantRequestsByOrganization(organizationId));
     }
 }

@@ -20,7 +20,7 @@ public class UserToOrganizationMapper {
                 .email(user.getEmail())
                 .phone(user.getPhone())
                 .role(user.getRole() != null ? user.getRole().name() : null)
-                .status(Boolean.TRUE.equals(user.getEnabled()) ? "active" : "inactive")
+                .status(resolveStatus(user))
                 .createdAt(user.getCreatedTimestamp() != null
                         ? user.getCreatedTimestamp()
                         .toInstant()
@@ -30,5 +30,12 @@ public class UserToOrganizationMapper {
                 .organizationId(user.getOrganization() != null ? user.getOrganization().getId() : null)
                 .organizationName(user.getOrganization() != null ? user.getOrganization().getName() : null)
                 .build();
+    }
+
+    private String resolveStatus(User user) {
+        if (Boolean.TRUE.equals(user.getArchived())) {
+            return "archived";
+        }
+        return Boolean.TRUE.equals(user.getEnabled()) ? "active" : "inactive";
     }
 }

@@ -16,6 +16,7 @@ public class OrganizationSettingsService {
     private final OrganizationRepository organizationRepository;
     private final OrganizationSettingsRepository organizationSettingsRepository;
     private final OrganizationSettingsMapper organizationSettingsMapper;
+    private final TenantAccessService tenantAccessService;
 
     public OrganizationSettingsDto getSettingsByOrganizationId(Integer organizationId) {
         Organization organization = organizationRepository.findById(organizationId)
@@ -25,6 +26,16 @@ public class OrganizationSettingsService {
                 .orElseGet(() -> createDefaultSettingsForOrganization(organization));
 
         return organizationSettingsMapper.toDto(settings);
+    }
+
+    public OrganizationSettingsDto getCurrentOrganizationSettings() {
+        Organization organization = tenantAccessService.getResolvedOrganizationOrThrow();
+        return getSettingsByOrganizationId(organization.getId());
+    }
+
+    public OrganizationSettingsDto getTenantSettings(Integer organizationId) {
+        tenantAccessService.assertOrganizationAccessOrThrow(organizationId);
+        return getSettingsByOrganizationId(organizationId);
     }
 
     public OrganizationSettings createDefaultSettingsForOrganization(Organization organization) {
@@ -46,6 +57,12 @@ public class OrganizationSettingsService {
         OrganizationSettings existing = organizationSettingsRepository.findByOrganizationId(organizationId)
                 .orElseThrow(() -> new RuntimeException("Organization settings not found"));
 
+        if (existing.getOrganization() == null) {
+            Organization organization = organizationRepository.findById(organizationId)
+                    .orElseThrow(() -> new RuntimeException("Organization not found"));
+            existing.setOrganization(organization);
+        }
+
         existing.setLogoUrl(updatedSettingsDto.getLogoUrl());
         existing.setPrimaryColor(updatedSettingsDto.getPrimaryColor());
         existing.setSecondaryColor(updatedSettingsDto.getSecondaryColor());
@@ -55,5 +72,10 @@ public class OrganizationSettingsService {
         existing.setFooterText(updatedSettingsDto.getFooterText());
 
         return organizationSettingsMapper.toDto(organizationSettingsRepository.save(existing));
+    }
+
+    public OrganizationSettingsDto updateTenantSettings(Integer organizationId, OrganizationSettingsDto updatedSettingsDto) {
+        tenantAccessService.assertOrganizationAccessOrThrow(organizationId);
+        return updateSettings(organizationId, updatedSettingsDto);
     }
 }

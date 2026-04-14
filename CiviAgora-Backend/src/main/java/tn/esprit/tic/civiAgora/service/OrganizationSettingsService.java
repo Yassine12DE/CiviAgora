@@ -39,11 +39,19 @@ public class OrganizationSettingsService {
     }
 
     public OrganizationSettings createDefaultSettingsForOrganization(Organization organization) {
+        return createDefaultSettingsForOrganization(organization, null, null);
+    }
+
+    public OrganizationSettings createDefaultSettingsForOrganization(
+            Organization organization,
+            String requestedPrimaryColor,
+            String requestedSecondaryColor
+    ) {
         OrganizationSettings settings = OrganizationSettings.builder()
                 .organization(organization)
                 .logoUrl(null)
-                .primaryColor("#2563eb")
-                .secondaryColor("#7c3aed")
+                .primaryColor(isHexColor(requestedPrimaryColor) ? requestedPrimaryColor : "#7B2CBF")
+                .secondaryColor(isHexColor(requestedSecondaryColor) ? requestedSecondaryColor : "#FF6B35")
                 .homeTitle("Welcome to " + organization.getName())
                 .welcomeText("This is the front-office of " + organization.getName())
                 .bannerImageUrl(null)
@@ -51,6 +59,10 @@ public class OrganizationSettingsService {
                 .build();
 
         return organizationSettingsRepository.save(settings);
+    }
+
+    private boolean isHexColor(String value) {
+        return value != null && value.matches("^#[0-9a-fA-F]{6}$");
     }
 
     public OrganizationSettingsDto updateSettings(Integer organizationId, OrganizationSettingsDto updatedSettingsDto) {

@@ -298,24 +298,41 @@ public class UserService {
     }
 
     public void createInitialAdminForOrganization(Organization organization, OrganizationRequest request) {
-        if (organization == null || request == null || request.getContactEmail() == null) {
+        if (organization == null || request == null) {
             return;
         }
 
-        if (userRepository.existsByEmail(request.getContactEmail())) {
-            return; // user already exists, do not overwrite
+        String adminEmail = request.getAdminEmail() != null && !request.getAdminEmail().isBlank()
+                ? request.getAdminEmail()
+                : request.getContactEmail();
+
+        if (adminEmail == null || adminEmail.isBlank()) {
+            return;
+        }
+
+        if (userRepository.existsByEmail(adminEmail)) {
+            throw new IllegalStateException("Admin email already exists");
         }
 
         String[] nameParts = request.getContactPersonName() != null ? request.getContactPersonName().split(" ", 2) : new String[]{"Admin", ""};
+        String firstName = request.getAdminFirstName() != null && !request.getAdminFirstName().isBlank()
+                ? request.getAdminFirstName()
+                : nameParts[0];
+        String lastName = request.getAdminLastName() != null && !request.getAdminLastName().isBlank()
+                ? request.getAdminLastName()
+                : nameParts.length > 1 ? nameParts[1] : "";
+        String password = request.getAdminPasswordHash() != null && !request.getAdminPasswordHash().isBlank()
+                ? request.getAdminPasswordHash()
+                : passwordEncoder.encode("TempPass@123");
 
         User user = User.builder()
-                .firstName(nameParts[0])
-                .lastName(nameParts.length > 1 ? nameParts[1] : "")
-                .email(request.getContactEmail())
+                .firstName(firstName)
+                .lastName(lastName)
+                .email(adminEmail)
                 .phone(request.getPhone())
                 .enabled(true)
                 .archived(false)
-                .password(passwordEncoder.encode("TempPass@123"))
+                .password(password)
                 .role(Role.ADMIN)
                 .organization(organization)
                 .build();

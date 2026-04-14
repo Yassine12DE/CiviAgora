@@ -16,6 +16,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +36,9 @@ public class AuthenticationController {
     private EmailService emailService;
     @Autowired
     private TenantAccessService tenantAccessService;
+
+    @Value("${civox.frontend.base-url:http://localhost:5173}")
+    private String frontendBaseUrl;
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
@@ -128,7 +132,7 @@ public class AuthenticationController {
             PasswordResetToken resetToken = userService.createPasswordResetToken(user);
 
             // 3️⃣ Build the reset link
-            String resetLink = "http://localhost:5173/reset-password?token=" + resetToken.getToken();
+            String resetLink = normalizeBaseUrl(frontendBaseUrl) + "/reset-password?token=" + resetToken.getToken();
 
 
             // 4️⃣ Generate email content
@@ -324,6 +328,11 @@ public class AuthenticationController {
             return "ACTIVE";
         }
         return "DISABLED";
+    }
+
+    private String normalizeBaseUrl(String baseUrl) {
+        String value = baseUrl == null || baseUrl.isBlank() ? "http://localhost:5173" : baseUrl.trim();
+        return value.replaceAll("/+$", "");
     }
 
 }

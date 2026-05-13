@@ -2,23 +2,14 @@ package tn.esprit.tic.civiAgora.mappers.usersMapper;
 
 import tn.esprit.tic.civiAgora.dao.entity.User;
 import tn.esprit.tic.civiAgora.dto.usersDto.BackOfficeSAASUserDto;
-import tn.esprit.tic.civiAgora.dao.entity.enums.Role;
 
 import java.time.format.DateTimeFormatter;
-import java.util.Set;
 
 public class BackOfficeSAASUserMapper {
 
-    private static final Set<Role> ALLOWED_ROLES = Set.of(
-            Role.ADMIN,
-            Role.MODERATOR,
-            Role.MANAGER,
-            Role.OBSERVER
-    );
-
     public static BackOfficeSAASUserDto toBackOfficeSAASUserDto(User user) {
 
-        if (user == null || !ALLOWED_ROLES.contains(user.getRole())) {
+        if (user == null) {
             return null;
         }
 
@@ -27,7 +18,8 @@ public class BackOfficeSAASUserMapper {
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .email(user.getEmail())
-                .role(user.getRole().name())
+                .role(user.getRole() != null ? user.getRole().name() : null)
+                .organizationId(user.getOrganization() != null ? user.getOrganization().getId() : null)
                 .organization(
                         user.getOrganization() != null
                                 ? user.getOrganization().getName()
@@ -44,6 +36,7 @@ public class BackOfficeSAASUserMapper {
                                 .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
                                 : null
                 )
+                .archived(Boolean.TRUE.equals(user.getArchived()))
                 .build();
     }
 }

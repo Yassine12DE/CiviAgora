@@ -14,9 +14,14 @@ public class ModuleDataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        createModuleIfNotExists("VOTE", "Vote", "Create polls and let organization users vote.");
-        createModuleIfNotExists("CONFERENCE", "Conference", "Create concertations and manage participation.");
-        createModuleIfNotExists("YOUTHSPACE", "YouthSpace", "Publish news for youth users.");
+        createModuleIfNotExists("VOTE", "Voting", "Online votes, polls, eligibility controls, and result publishing.");
+        createModuleIfNotExists("CONFERENCE", "Concertation", "Public consultation spaces with moderation and discussion threads.");
+        createModuleIfNotExists("YOUTHSPACE", "Youth Space", "Dedicated civic participation area for youth programs.");
+        createModuleIfNotExists("EVENTS", "Events", "Event publishing, registrations, attendance, and reminders.");
+        createModuleIfNotExists("SURVEYS", "Surveys", "Structured questionnaires with exports and branching logic.");
+        createModuleIfNotExists("COMPLAINTS", "Complaints", "Issue reporting, routing, and public service tracking.");
+        createModuleIfNotExists("NEWS", "News", "Official announcements and tenant news feeds.");
+        createModuleIfNotExists("ANALYTICS", "Analytics", "Participation analytics, exports, and executive dashboards.");
     }
 
     private void createModuleIfNotExists(String code, String name, String description) {

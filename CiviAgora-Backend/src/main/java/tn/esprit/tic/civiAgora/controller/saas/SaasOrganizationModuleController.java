@@ -2,7 +2,6 @@ package tn.esprit.tic.civiAgora.controller.saas;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import tn.esprit.tic.civiAgora.dto.moduleDto.OrganizationModuleDto;
 import tn.esprit.tic.civiAgora.service.OrganizationModuleService;
@@ -17,32 +16,34 @@ public class SaasOrganizationModuleController {
     private final OrganizationModuleService organizationModuleService;
 
     @GetMapping
-    //@PreAuthorize("hasAuthority('SUPER_ADMIN')")
     public ResponseEntity<List<OrganizationModuleDto>> getOrganizationModules(
             @PathVariable("organizationId") Integer organizationId
     ) {
         return ResponseEntity.ok(organizationModuleService.getAllModulesForOrganization(organizationId));
     }
 
-    @PostMapping("/{moduleCode}")
-    //@PreAuthorize("hasAuthority('SUPER_ADMIN')")
-    public ResponseEntity<OrganizationModuleDto> grantModule(
+    @PostMapping("/{moduleReference}")
+    public ResponseEntity<List<OrganizationModuleDto>> grantModule(
             @PathVariable("organizationId") Integer organizationId,
-            @PathVariable("moduleCode") String moduleCode,
+            @PathVariable("moduleReference") String moduleReference,
             @RequestParam(value = "displayOrder", required = false) Integer displayOrder
     ) {
         return ResponseEntity.ok(
-                organizationModuleService.grantModuleToOrganization(organizationId, moduleCode, displayOrder)
+                organizationModuleService.addModuleToOrganization(
+                        organizationId,
+                        moduleReference,
+                        displayOrder
+                )
         );
     }
 
-    @DeleteMapping("/{moduleCode}")
-    //@PreAuthorize("hasAuthority('SUPER_ADMIN')")
-    public ResponseEntity<String> removeGrantedModule(
+    @DeleteMapping("/{moduleReference}")
+    public ResponseEntity<List<OrganizationModuleDto>> removeGrantedModule(
             @PathVariable("organizationId") Integer organizationId,
-            @PathVariable("moduleCode") String moduleCode
+            @PathVariable("moduleReference") String moduleReference
     ) {
-        organizationModuleService.removeGrantedModule(organizationId, moduleCode);
-        return ResponseEntity.ok("Module removed successfully");
+        return ResponseEntity.ok(
+                organizationModuleService.removeModuleFromOrganization(organizationId, moduleReference)
+        );
     }
 }

@@ -6,7 +6,6 @@ tn\esprit\tic\civiAgora\dto\usersDto\BackOfficeSAASUserDto.class
 tn\esprit\tic\civiAgora\config\LogoutService.class
 tn\esprit\tic\civiAgora\service\OrganizationOnboardingEmailService.class
 tn\esprit\tic\civiAgora\dto\moduleDto\OrganizationModuleDto.class
-tn\esprit\tic\civiAgora\DataInitializer\ModuleDataInitializer.class
 tn\esprit\tic\civiAgora\dao\entity\User.class
 tn\esprit\tic\civiAgora\dao\repository\OrganizationContentResponseRepository.class
 tn\esprit\tic\civiAgora\dao\entity\OrganizationModule.class
@@ -80,7 +79,6 @@ tn\esprit\tic\civiAgora\dao\entity\OrganizationContentResponse.class
 tn\esprit\tic\civiAgora\dao\repository\OrganizationSettingsRepository.class
 tn\esprit\tic\civiAgora\config\TenantContext.class
 tn\esprit\tic\civiAgora\dto\organizationDto\UserToOrganizationDto$UserToOrganizationDtoBuilder.class
-tn\esprit\tic\civiAgora\DataInitializer\DataInitializer.class
 tn\esprit\tic\civiAgora\service\RbacService.class
 tn\esprit\tic\civiAgora\dao\entity\ModuleRequest$ModuleRequestBuilder.class
 tn\esprit\tic\civiAgora\auth\AuthenticationRequest$AuthenticationRequestBuilder.class
@@ -136,7 +134,6 @@ tn\esprit\tic\civiAgora\dto\usersDto\CurrentUserProfileDto.class
 tn\esprit\tic\civiAgora\controller\back_office\OrganizationBackOfficeController.class
 tn\esprit\tic\civiAgora\dto\organizationRequestDto\OrganizationAccessRequestCreateDto$OrganizationAccessRequestCreateDtoBuilder.class
 tn\esprit\tic\civiAgora\dto\usersDto\TenantUserRequest$TenantUserRequestBuilder.class
-tn\esprit\tic\civiAgora\controller\saas\SAASController.class
 tn\esprit\tic\civiAgora\dao\entity\enums\OrganizationRequestStatus.class
 tn\esprit\tic\civiAgora\dto\organizationSettingsDto\PublicOrganizationBrandingDto$PublicOrganizationBrandingDtoBuilder.class
 tn\esprit\tic\civiAgora\auth\RegisterRequest$RegisterRequestBuilder.class

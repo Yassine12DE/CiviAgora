@@ -7,6 +7,7 @@ C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\s
 C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\mappers\moduleRequestMappers\ModuleRequestMapper.java
 C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\dao\entity\enums\OnboardingEmailType.java
 C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\civiAgoraApplication.java
+C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\service\SaasPlatformSettingsService.java
 C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\mappers\usersMapper\BackOfficeSAASUserMapper.java
 C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\dao\repository\UserRepository.java
 C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\dao\repository\OrganizationContentResponseRepository.java
@@ -18,10 +19,13 @@ C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\s
 C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\config\SecurityConfiguration.java
 C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\mappers\usersMapper\UserProfileMapper.java
 C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\controller\publicControllers\PublicOrganizationController.java
+C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\dao\repository\SaasPlatformSettingsRepository.java
 C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\dao\entity\OrganizationContentItem.java
 C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\mappers\organizationSettingsMappers\OrganizationSettingsMapper.java
 C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\dao\entity\enums\PaymentStatus.java
 C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\controller\publicControllers\PublicController.java
+C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\controller\saas\SaasPlatformSettingsController.java
+C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\dto\saasDto\SaasPlatformSettingsDto.java
 C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\service\UserService.java
 C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\config\LogoutService.java
 C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\config\TenantContext.java
@@ -35,6 +39,8 @@ C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\s
 C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\auth\AuthenticationService.java
 C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\dao\repository\OrganizationContentItemRepository.java
 C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\dto\organizationRequestDto\OrganizationAccessRequestCreateDto.java
+C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\controller\saas\SaasModuleCatalogController.java
+C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\dto\saasDto\SaasModuleUpsertRequest.java
 C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\dao\entity\enums\OrganizationStatus.java
 C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\dto\usersDto\UpdateCurrentUserProfileRequest.java
 C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\dao\entity\OrganizationSettings.java
@@ -52,12 +58,15 @@ C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\s
 C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\mappers\moduleMappers\ModuleMapper.java
 C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\config\JwtService.java
 C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\dao\repository\ModuleRequestRepository.java
+C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\dto\saasDto\SaasUserCreateRequest.java
 C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\auth\AuthenticationResponse.java
 C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\config\CorsConfig.java
 C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\config\ApplicationConfig.java
 C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\dto\organizationRequestDto\OrganizationRequestDecisionDto.java
 C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\dao\entity\PasswordResetToken.java
 C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\dto\organizationRequestDto\OrganizationRequestDto.java
+C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\dto\saasDto\SaasUserResetPasswordRequest.java
+C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\dto\saasDto\SaasModuleCatalogItemDto.java
 C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\dto\contentDto\OrganizationContentInteractionRequest.java
 C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\controller\saas\OrganizationController.java
 C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\auth\RegisterRequest.java
@@ -68,6 +77,8 @@ C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\s
 C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\dao\entity\enums\Role.java
 C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\controller\back_office\OrganizationContentController.java
 C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\service\PaymentActivationService.java
+C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\dao\entity\SaasPlatformSettings.java
+C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\dto\saasDto\SaasUserUpdateRequest.java
 C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\service\OrganizationProvisioningService.java
 C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\config\OrganizationRequestSchemaGuard.java
 C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\src\main\java\tn\esprit\tic\civiAgora\dto\organizationDto\OrganizationDto.java

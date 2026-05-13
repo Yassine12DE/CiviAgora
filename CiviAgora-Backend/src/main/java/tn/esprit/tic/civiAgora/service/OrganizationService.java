@@ -56,9 +56,11 @@ public class OrganizationService {
     // Create a new organization
     public Organization createOrganization(Organization organization) {
         organization.setCreatedAt(LocalDateTime.now());
-        organizationSettingsService.createDefaultSettingsForOrganization(organization);
-
-        return organizationRepository.save(organization);
+        Organization created = organizationRepository.save(organization);
+        if (organizationSettingsRepository.findByOrganizationId(created.getId()).isEmpty()) {
+            organizationSettingsService.createDefaultSettingsForOrganization(created);
+        }
+        return created;
     }
 
     // Update an existing organization

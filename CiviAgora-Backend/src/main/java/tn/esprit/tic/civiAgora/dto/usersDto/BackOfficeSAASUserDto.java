@@ -17,9 +17,10 @@ public class BackOfficeSAASUserDto {
     private String lastName;
     private String email;
     private String role;
+    private Integer organizationId;
     private String organization; // Name of the organization
     private String status;
     private String createdAt;
-
+    private Boolean archived;
 
 }

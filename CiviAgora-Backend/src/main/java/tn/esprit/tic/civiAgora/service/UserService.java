@@ -9,6 +9,8 @@ import tn.esprit.tic.civiAgora.dao.repository.OrganizationRepository;
 import tn.esprit.tic.civiAgora.dao.repository.PasswordResetTokenRepository;
 import tn.esprit.tic.civiAgora.dao.repository.UserRepository;
 import tn.esprit.tic.civiAgora.dto.usersDto.BackOfficeSAASUserDto;
+import tn.esprit.tic.civiAgora.dto.saasDto.SaasUserCreateRequest;
+import tn.esprit.tic.civiAgora.dto.saasDto.SaasUserUpdateRequest;
 import tn.esprit.tic.civiAgora.dto.usersDto.TenantUserRequest;
 import tn.esprit.tic.civiAgora.dto.usersDto.UpdateCurrentUserProfileRequest;
 import tn.esprit.tic.civiAgora.dto.usersDto.UserProfileDto;
@@ -22,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 @Service
@@ -56,6 +59,108 @@ public class UserService {
                 .map(BackOfficeSAASUserMapper::toBackOfficeSAASUserDto)
                 .filter(dto -> dto != null)
                 .toList();
+    }
+
+    public BackOfficeSAASUserDto createSaasUser(SaasUserCreateRequest request) {
+        if (request == null) {
+            throw new IllegalArgumentException("User payload is required");
+        }
+        if (request.getEmail() == null || request.getEmail().isBlank()) {
+            throw new IllegalArgumentException("Email is required");
+        }
+        if (request.getRole() == null || request.getRole().isBlank()) {
+            throw new IllegalArgumentException("Role is required");
+        }
+        if (userRepository.existsByEmail(request.getEmail().trim().toLowerCase(Locale.ROOT))) {
+            throw new IllegalStateException("Email already in use");
+        }
+
+        Role role = Role.valueOf(request.getRole().trim().toUpperCase(Locale.ROOT));
+        Organization organization = null;
+        if (request.getOrganizationId() != null) {
+            organization = organizationRepository.findById(request.getOrganizationId())
+                    .orElseThrow(() -> new RuntimeException("Organization not found"));
+        }
+
+        String password = request.getPassword() == null || request.getPassword().isBlank()
+                ? "TempPass@123"
+                : request.getPassword();
+
+        User user = User.builder()
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .email(request.getEmail().trim().toLowerCase(Locale.ROOT))
+                .phone(request.getPhone())
+                .password(passwordEncoder.encode(password))
+                .role(role)
+                .enabled(true)
+                .archived(false)
+                .organization(organization)
+                .build();
+
+        User saved = userRepository.save(user);
+        if (organization != null) {
+            updateUsersCount(organization.getId());
+        }
+        return BackOfficeSAASUserMapper.toBackOfficeSAASUserDto(saved);
+    }
+
+    public BackOfficeSAASUserDto updateSaasUser(Integer userId, SaasUserUpdateRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Integer previousOrganizationId = user.getOrganization() != null ? user.getOrganization().getId() : null;
+
+        if (request.getFirstName() != null) {
+            user.setFirstName(request.getFirstName());
+        }
+        if (request.getLastName() != null) {
+            user.setLastName(request.getLastName());
+        }
+        if (request.getPhone() != null) {
+            user.setPhone(request.getPhone());
+        }
+        if (request.getEnabled() != null) {
+            user.setEnabled(request.getEnabled());
+        }
+        if (request.getRole() != null && !request.getRole().isBlank()) {
+            user.setRole(Role.valueOf(request.getRole().trim().toUpperCase(Locale.ROOT)));
+        }
+
+        if (request.getOrganizationId() != null) {
+            Organization organization = organizationRepository.findById(request.getOrganizationId())
+                    .orElseThrow(() -> new RuntimeException("Organization not found"));
+            user.setOrganization(organization);
+        }
+
+        User saved = userRepository.save(user);
+
+        Integer nextOrganizationId = saved.getOrganization() != null ? saved.getOrganization().getId() : null;
+        if (previousOrganizationId != null && !previousOrganizationId.equals(nextOrganizationId)) {
+            updateUsersCount(previousOrganizationId);
+        }
+        if (nextOrganizationId != null) {
+            updateUsersCount(nextOrganizationId);
+        }
+
+        return BackOfficeSAASUserMapper.toBackOfficeSAASUserDto(saved);
+    }
+
+    public BackOfficeSAASUserDto archiveSaasUser(Integer userId, boolean archived) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        user.setArchived(archived);
+        User saved = userRepository.save(user);
+        return BackOfficeSAASUserMapper.toBackOfficeSAASUserDto(saved);
+    }
+
+    public BackOfficeSAASUserDto resetSaasUserPassword(Integer userId, String newPassword) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        String nextPassword = (newPassword == null || newPassword.isBlank()) ? "TempPass@123" : newPassword;
+        user.setPassword(passwordEncoder.encode(nextPassword));
+        User saved = userRepository.save(user);
+        return BackOfficeSAASUserMapper.toBackOfficeSAASUserDto(saved);
     }
 
     public User getUserById(Integer id) throws Exception {

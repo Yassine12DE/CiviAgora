@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="tn.esprit.tic.civiAgora.PortailApplicationTests" time="16.435" tests="1" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="tn.esprit.tic.civiAgora.PortailApplicationTests" time="10.43" tests="1" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="17"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -17,7 +17,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="FR"/>
     <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk-17\bin"/>
-    <property name="sun.java.command" value="C:\Users\MSI\AppData\Local\Temp\surefire14231210006572045094\surefirebooter-20260414144013288_3.jar C:\Users\MSI\AppData\Local\Temp\surefire14231210006572045094 2026-04-14T14-40-12_919-jvmRun1 surefire-20260414144013288_1tmp surefire_0-20260414144013288_2tmp"/>
+    <property name="sun.java.command" value="C:\Users\MSI\AppData\Local\Temp\surefire13372381100700225471\surefirebooter-20260512123111990_3.jar C:\Users\MSI\AppData\Local\Temp\surefire13372381100700225471 2026-05-12T12-31-11_776-jvmRun1 surefire-20260512123111990_1tmp surefire_0-20260512123111990_2tmp"/>
     <property name="jdk.debug" value="release"/>
     <property name="surefire.test.class.path" value="C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\target\test-classes;C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend\target\classes;C:\Users\MSI\.m2\repository\org\springframework\boot\spring-boot-starter-data-jpa\3.2.3\spring-boot-starter-data-jpa-3.2.3.jar;C:\Users\MSI\.m2\repository\org\springframework\boot\spring-boot-starter-aop\3.2.3\spring-boot-starter-aop-3.2.3.jar;C:\Users\MSI\.m2\repository\org\aspectj\aspectjweaver\1.9.21\aspectjweaver-1.9.21.jar;C:\Users\MSI\.m2\repository\org\springframework\boot\spring-boot-starter-jdbc\3.2.3\spring-boot-starter-jdbc-3.2.3.jar;C:\Users\MSI\.m2\repository\com\zaxxer\HikariCP\5.0.1\HikariCP-5.0.1.jar;C:\Users\MSI\.m2\repository\org\springframework\spring-jdbc\6.1.4\spring-jdbc-6.1.4.jar;C:\Users\MSI\.m2\repository\org\hibernate\orm\hibernate-core\6.4.4.Final\hibernate-core-6.4.4.Final.jar;C:\Users\MSI\.m2\repository\jakarta\persistence\jakarta.persistence-api\3.1.0\jakarta.persistence-api-3.1.0.jar;C:\Users\MSI\.m2\repository\jakarta\transaction\jakarta.transaction-api\2.0.1\jakarta.transaction-api-2.0.1.jar;C:\Users\MSI\.m2\repository\org\jboss\logging\jboss-logging\3.5.3.Final\jboss-logging-3.5.3.Final.jar;C:\Users\MSI\.m2\repository\org\hibernate\common\hibernate-commons-annotations\6.0.6.Final\hibernate-commons-annotations-6.0.6.Final.jar;C:\Users\MSI\.m2\repository\io\smallrye\jandex\3.1.2\jandex-3.1.2.jar;C:\Users\MSI\.m2\repository\com\fasterxml\classmate\1.6.0\classmate-1.6.0.jar;C:\Users\MSI\.m2\repository\net\bytebuddy\byte-buddy\1.14.12\byte-buddy-1.14.12.jar;C:\Users\MSI\.m2\repository\org\glassfish\jaxb\jaxb-runtime\4.0.4\jaxb-runtime-4.0.4.jar;C:\Users\MSI\.m2\repository\org\glassfish\jaxb\jaxb-core\4.0.4\jaxb-core-4.0.4.jar;C:\Users\MSI\.m2\repository\org\glassfish\jaxb\txw2\4.0.4\txw2-4.0.4.jar;C:\Users\MSI\.m2\repository\com\sun\istack\istack-commons-runtime\4.1.2\istack-commons-runtime-4.1.2.jar;C:\Users\MSI\.m2\repository\jakarta\inject\jakarta.inject-api\2.0.1\jakarta.inject-api-2.0.1.jar;C:\Users\MSI\.m2\repository\org\antlr\antlr4-runtime\4.13.0\antlr4-runtime-4.13.0.jar;C:\Users\MSI\.m2\repository\org\springframework\data\spring-data-jpa\3.2.3\spring-data-jpa-3.2.3.jar;C:\Users\MSI\.m2\repository\org\springframework\data\spring-data-commons\3.2.3\spring-data-commons-3.2.3.jar;C:\Users\MSI\.m2\repository\org\springframework\spring-orm\6.1.4\spring-orm-6.1.4.jar;C:\Users\MSI\.m2\repository\org\springframework\spring-tx\6.1.4\spring-tx-6.1.4.jar;C:\Users\MSI\.m2\repository\jakarta\annotation\jakarta.annotation-api\2.1.1\jakarta.annotation-api-2.1.1.jar;C:\Users\MSI\.m2\repository\org\slf4j\slf4j-api\2.0.12\slf4j-api-2.0.12.jar;C:\Users\MSI\.m2\repository\org\springframework\spring-aspects\6.1.4\spring-aspects-6.1.4.jar;C:\Users\MSI\.m2\repository\org\springframework\boot\spring-boot-starter-security\3.2.3\spring-boot-starter-security-3.2.3.jar;C:\Users\MSI\.m2\repository\org\springframework\boot\spring-boot-starter\3.2.3\spring-boot-starter-3.2.3.jar;C:\Users\MSI\.m2\repository\org\springframework\boot\spring-boot\3.2.3\spring-boot-3.2.3.jar;C:\Users\MSI\.m2\repository\org\springframework\boot\spring-boot-autoconfigure\3.2.3\spring-boot-autoconfigure-3.2.3.jar;C:\Users\MSI\.m2\repository\org\springframework\boot\spring-boot-starter-logging\3.2.3\spring-boot-starter-logging-3.2.3.jar;C:\Users\MSI\.m2\repository\ch\qos\logback\logback-classic\1.4.14\logback-classic-1.4.14.jar;C:\Users\MSI\.m2\repository\ch\qos\logback\logback-core\1.4.14\logback-core-1.4.14.jar;C:\Users\MSI\.m2\repository\org\apache\logging\log4j\log4j-to-slf4j\2.21.1\log4j-to-slf4j-2.21.1.jar;C:\Users\MSI\.m2\repository\org\slf4j\jul-to-slf4j\2.0.12\jul-to-slf4j-2.0.12.jar;C:\Users\MSI\.m2\repository\org\yaml\snakeyaml\2.2\snakeyaml-2.2.jar;C:\Users\MSI\.m2\repository\org\springframework\spring-aop\6.1.4\spring-aop-6.1.4.jar;C:\Users\MSI\.m2\repository\org\springframework\security\spring-security-web\6.2.2\spring-security-web-6.2.2.jar;C:\Users\MSI\.m2\repository\org\springframework\spring-expression\6.1.4\spring-expression-6.1.4.jar;C:\Users\MSI\.m2\repository\org\springframework\boot\spring-boot-starter-web\3.2.3\spring-boot-starter-web-3.2.3.jar;C:\Users\MSI\.m2\repository\org\springframework\boot\spring-boot-starter-json\3.2.3\spring-boot-starter-json-3.2.3.jar;C:\Users\MSI\.m2\repository\com\fasterxml\jackson\datatype\jackson-datatype-jdk8\2.15.4\jackson-datatype-jdk8-2.15.4.jar;C:\Users\MSI\.m2\repository\com\fasterxml\jackson\datatype\jackson-datatype-jsr310\2.15.4\jackson-datatype-jsr310-2.15.4.jar;C:\Users\MSI\.m2\repository\com\fasterxml\jackson\module\jackson-module-parameter-names\2.15.4\jackson-module-parameter-names-2.15.4.jar;C:\Users\MSI\.m2\repository\org\springframework\boot\spring-boot-starter-tomcat\3.2.3\spring-boot-starter-tomcat-3.2.3.jar;C:\Users\MSI\.m2\repository\org\apache\tomcat\embed\tomcat-embed-core\10.1.19\tomcat-embed-core-10.1.19.jar;C:\Users\MSI\.m2\repository\org\apache\tomcat\embed\tomcat-embed-websocket\10.1.19\tomcat-embed-websocket-10.1.19.jar;C:\Users\MSI\.m2\repository\org\springframework\spring-web\6.1.4\spring-web-6.1.4.jar;C:\Users\MSI\.m2\repository\io\micrometer\micrometer-observation\1.12.3\micrometer-observation-1.12.3.jar;C:\Users\MSI\.m2\repository\io\micrometer\micrometer-commons\1.12.3\micrometer-commons-1.12.3.jar;C:\Users\MSI\.m2\repository\org\springframework\spring-webmvc\6.1.4\spring-webmvc-6.1.4.jar;C:\Users\MSI\.m2\repository\org\springframework\boot\spring-boot-starter-validation\3.2.3\spring-boot-starter-validation-3.2.3.jar;C:\Users\MSI\.m2\repository\org\apache\tomcat\embed\tomcat-embed-el\10.1.19\tomcat-embed-el-10.1.19.jar;C:\Users\MSI\.m2\repository\org\hibernate\validator\hibernate-validator\8.0.1.Final\hibernate-validator-8.0.1.Final.jar;C:\Users\MSI\.m2\repository\jakarta\validation\jakarta.validation-api\3.0.2\jakarta.validation-api-3.0.2.jar;C:\Users\MSI\.m2\repository\org\springframework\boot\spring-boot-starter-websocket\3.2.3\spring-boot-starter-websocket-3.2.3.jar;C:\Users\MSI\.m2\repository\org\springframework\spring-messaging\6.1.4\spring-messaging-6.1.4.jar;C:\Users\MSI\.m2\repository\org\springframework\spring-websocket\6.1.4\spring-websocket-6.1.4.jar;C:\Users\MSI\.m2\repository\org\springframework\boot\spring-boot-starter-mail\3.2.3\spring-boot-starter-mail-3.2.3.jar;C:\Users\MSI\.m2\repository\org\springframework\spring-context-support\6.1.4\spring-context-support-6.1.4.jar;C:\Users\MSI\.m2\repository\org\eclipse\angus\jakarta.mail\2.0.2\jakarta.mail-2.0.2.jar;C:\Users\MSI\.m2\repository\jakarta\activation\jakarta.activation-api\2.1.2\jakarta.activation-api-2.1.2.jar;C:\Users\MSI\.m2\repository\org\eclipse\angus\angus-activation\2.0.1\angus-activation-2.0.1.jar;C:\Users\MSI\.m2\repository\com\mysql\mysql-connector-j\8.3.0\mysql-connector-j-8.3.0.jar;C:\Users\MSI\.m2\repository\org\projectlombok\lombok\1.18.30\lombok-1.18.30.jar;C:\Users\MSI\.m2\repository\org\springframework\security\spring-security-config\6.2.2\spring-security-config-6.2.2.jar;C:\Users\MSI\.m2\repository\org\springframework\security\spring-security-core\6.2.2\spring-security-core-6.2.2.jar;C:\Users\MSI\.m2\repository\org\springframework\security\spring-security-crypto\6.2.2\spring-security-crypto-6.2.2.jar;C:\Users\MSI\.m2\repository\org\springframework\spring-beans\6.1.4\spring-beans-6.1.4.jar;C:\Users\MSI\.m2\repository\org\springframework\spring-context\6.1.4\spring-context-6.1.4.jar;C:\Users\MSI\.m2\repository\org\springframework\spring-core\6.1.4\spring-core-6.1.4.jar;C:\Users\MSI\.m2\repository\org\springframework\spring-jcl\6.1.4\spring-jcl-6.1.4.jar;C:\Users\MSI\.m2\repository\io\jsonwebtoken\jjwt-api\0.11.5\jjwt-api-0.11.5.jar;C:\Users\MSI\.m2\repository\io\jsonwebtoken\jjwt-impl\0.11.5\jjwt-impl-0.11.5.jar;C:\Users\MSI\.m2\repository\io\jsonwebtoken\jjwt-jackson\0.11.5\jjwt-jackson-0.11.5.jar;C:\Users\MSI\.m2\repository\com\fasterxml\jackson\core\jackson-databind\2.15.4\jackson-databind-2.15.4.jar;C:\Users\MSI\.m2\repository\com\fasterxml\jackson\core\jackson-annotations\2.15.4\jackson-annotations-2.15.4.jar;C:\Users\MSI\.m2\repository\com\fasterxml\jackson\core\jackson-core\2.15.4\jackson-core-2.15.4.jar;C:\Users\MSI\.m2\repository\org\apache\poi\poi-ooxml\5.2.3\poi-ooxml-5.2.3.jar;C:\Users\MSI\.m2\repository\org\apache\poi\poi\5.2.3\poi-5.2.3.jar;C:\Users\MSI\.m2\repository\commons-codec\commons-codec\1.16.1\commons-codec-1.16.1.jar;C:\Users\MSI\.m2\repository\org\apache\commons\commons-math3\3.6.1\commons-math3-3.6.1.jar;C:\Users\MSI\.m2\repository\com\zaxxer\SparseBitSet\1.2\SparseBitSet-1.2.jar;C:\Users\MSI\.m2\repository\org\apache\poi\poi-ooxml-lite\5.2.3\poi-ooxml-lite-5.2.3.jar;C:\Users\MSI\.m2\repository\org\apache\xmlbeans\xmlbeans\5.1.1\xmlbeans-5.1.1.jar;C:\Users\MSI\.m2\repository\org\apache\commons\commons-compress\1.21\commons-compress-1.21.jar;C:\Users\MSI\.m2\repository\commons-io\commons-io\2.11.0\commons-io-2.11.0.jar;C:\Users\MSI\.m2\repository\com\github\virtuald\curvesapi\1.07\curvesapi-1.07.jar;C:\Users\MSI\.m2\repository\org\apache\logging\log4j\log4j-api\2.21.1\log4j-api-2.21.1.jar;C:\Users\MSI\.m2\repository\org\apache\commons\commons-collections4\4.4\commons-collections4-4.4.jar;C:\Users\MSI\.m2\repository\org\springframework\boot\spring-boot-starter-test\3.2.3\spring-boot-starter-test-3.2.3.jar;C:\Users\MSI\.m2\repository\org\springframework\boot\spring-boot-test\3.2.3\spring-boot-test-3.2.3.jar;C:\Users\MSI\.m2\repository\org\springframework\boot\spring-boot-test-autoconfigure\3.2.3\spring-boot-test-autoconfigure-3.2.3.jar;C:\Users\MSI\.m2\repository\com\jayway\jsonpath\json-path\2.9.0\json-path-2.9.0.jar;C:\Users\MSI\.m2\repository\jakarta\xml\bind\jakarta.xml.bind-api\4.0.1\jakarta.xml.bind-api-4.0.1.jar;C:\Users\MSI\.m2\repository\net\minidev\json-smart\2.5.0\json-smart-2.5.0.jar;C:\Users\MSI\.m2\repository\net\minidev\accessors-smart\2.5.0\accessors-smart-2.5.0.jar;C:\Users\MSI\.m2\repository\org\ow2\asm\asm\9.3\asm-9.3.jar;C:\Users\MSI\.m2\repository\org\assertj\assertj-core\3.24.2\assertj-core-3.24.2.jar;C:\Users\MSI\.m2\repository\org\awaitility\awaitility\4.2.0\awaitility-4.2.0.jar;C:\Users\MSI\.m2\repository\org\hamcrest\hamcrest\2.2\hamcrest-2.2.jar;C:\Users\MSI\.m2\repository\org\junit\jupiter\junit-jupiter\5.10.2\junit-jupiter-5.10.2.jar;C:\Users\MSI\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.10.2\junit-jupiter-api-5.10.2.jar;C:\Users\MSI\.m2\repository\org\opentest4j\opentest4j\1.3.0\opentest4j-1.3.0.jar;C:\Users\MSI\.m2\repository\org\junit\platform\junit-platform-commons\1.10.2\junit-platform-commons-1.10.2.jar;C:\Users\MSI\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\MSI\.m2\repository\org\junit\jupiter\junit-jupiter-params\5.10.2\junit-jupiter-params-5.10.2.jar;C:\Users\MSI\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.10.2\junit-jupiter-engine-5.10.2.jar;C:\Users\MSI\.m2\repository\org\junit\platform\junit-platform-engine\1.10.2\junit-platform-engine-1.10.2.jar;C:\Users\MSI\.m2\repository\org\mockito\mockito-core\5.7.0\mockito-core-5.7.0.jar;C:\Users\MSI\.m2\repository\net\bytebuddy\byte-buddy-agent\1.14.12\byte-buddy-agent-1.14.12.jar;C:\Users\MSI\.m2\repository\org\objenesis\objenesis\3.3\objenesis-3.3.jar;C:\Users\MSI\.m2\repository\org\mockito\mockito-junit-jupiter\5.7.0\mockito-junit-jupiter-5.7.0.jar;C:\Users\MSI\.m2\repository\org\skyscreamer\jsonassert\1.5.1\jsonassert-1.5.1.jar;C:\Users\MSI\.m2\repository\com\vaadin\external\google\android-json\0.0.20131108.vaadin1\android-json-0.0.20131108.vaadin1.jar;C:\Users\MSI\.m2\repository\org\springframework\spring-test\6.1.4\spring-test-6.1.4.jar;C:\Users\MSI\.m2\repository\org\xmlunit\xmlunit-core\2.9.1\xmlunit-core-2.9.1.jar;"/>
     <property name="sun.cpu.endian" value="little"/>
@@ -34,7 +34,7 @@
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="FILE_LOG_CHARSET" value="windows-1252"/>
     <property name="java.awt.headless" value="true"/>
-    <property name="surefire.real.class.path" value="C:\Users\MSI\AppData\Local\Temp\surefire14231210006572045094\surefirebooter-20260414144013288_3.jar"/>
+    <property name="surefire.real.class.path" value="C:\Users\MSI\AppData\Local\Temp\surefire13372381100700225471\surefirebooter-20260512123111990_3.jar"/>
     <property name="user.script" value=""/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="17.0.12+8-LTS-286"/>
@@ -52,20 +52,20 @@
     <property name="user.dir" value="C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend"/>
     <property name="os.arch" value="amd64"/>
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
-    <property name="PID" value="24764"/>
+    <property name="PID" value="24556"/>
     <property name="sun.os.patch.level" value=""/>
     <property name="CONSOLE_LOG_CHARSET" value="windows-1252"/>
     <property name="native.encoding" value="Cp1252"/>
-    <property name="java.library.path" value="C:\Program Files\Java\jdk-17\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\Users\MSI\.codex\tmp\arg0\codex-arg0wX4hfF;C:\Users\MSI\AppData\Local\Programs\Microsoft VS Code;C:\Program Files (x86)\VMware\VMware Workstation\bin\;C:\Users\MSI\OneDrive\Bureau\WINDOWS.X64_213000_db_home\bin;C:\Program Files\Common Files\Oracle\Java\javapath;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\xampp\php;C:\Program Files\Git\cmd;C:\apache-maven\bin;C:\apache-maven-3.9.9-bin\apache-maven-3.9.9\bin;C:\Program Files\Microsoft SQL Server\150\Tools\Binn\;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\;C:\Program Files\dotnet\;C:\Program Files\Vagrant\bin;C:\Program Files\Docker\Docker\resources\bin;C:\Program Files\nodejs\;C:\Users\MSI\scoop\shims;C:\Users\MSI\AppData\Local\Microsoft\WindowsApps;C:\Users\MSI\AppData\Local\Programs\Microsoft VS Code\bin;C:\Program Files\JetBrains\IntelliJ IDEA 2023.3.2\bin;;C:\Program Files\Java\jdk-17\bin;C:\Users\MSI\.dotnet\tools;C:\Users\MSI\AppData\Local\Programs\Ollama;C:\Users\MSI\AppData\Local\Programs\cursor\resources\app\bin;C:\Users\MSI\AppData\Local\Programs\Antigravity\bin;C:\Users\MSI\AppData\Roaming\npm;c:\Users\MSI\.vscode\extensions\openai.chatgpt-26.409.20454-win32-x64\bin\windows-x86_64;."/>
+    <property name="java.library.path" value="C:\Program Files\Java\jdk-17\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\Users\MSI\.codex\tmp\arg0\codex-arg0rFU3VG;C:\Users\MSI\AppData\Local\Programs\Microsoft VS Code;C:\Program Files (x86)\VMware\VMware Workstation\bin\;C:\Users\MSI\OneDrive\Bureau\WINDOWS.X64_213000_db_home\bin;C:\Program Files\Common Files\Oracle\Java\javapath;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\xampp\php;C:\Program Files\Git\cmd;C:\apache-maven\bin;C:\apache-maven-3.9.9-bin\apache-maven-3.9.9\bin;C:\Program Files\Microsoft SQL Server\150\Tools\Binn\;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\;C:\Program Files\dotnet\;C:\Program Files\Vagrant\bin;C:\Program Files\Docker\Docker\resources\bin;C:\Program Files\nodejs\;C:\Users\MSI\scoop\shims;C:\Users\MSI\AppData\Local\Microsoft\WindowsApps;C:\Users\MSI\AppData\Local\Programs\Microsoft VS Code\bin;C:\Program Files\JetBrains\IntelliJ IDEA 2023.3.2\bin;;C:\Program Files\Java\jdk-17\bin;C:\Users\MSI\.dotnet\tools;C:\Users\MSI\AppData\Local\Programs\Ollama;C:\Users\MSI\AppData\Local\Programs\cursor\resources\app\bin;C:\Users\MSI\AppData\Local\Programs\Antigravity\bin;C:\Users\MSI\AppData\Roaming\npm;c:\Users\MSI\.vscode\extensions\openai.chatgpt-26.422.71525-win32-x64\bin\windows-x86_64;."/>
     <property name="java.vm.info" value="mixed mode, sharing"/>
     <property name="java.vendor" value="Oracle Corporation"/>
     <property name="java.vm.version" value="17.0.12+8-LTS-286"/>
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="61.0"/>
   </properties>
-  <testcase name="contextLoads" classname="tn.esprit.tic.civiAgora.PortailApplicationTests" time="0.958">
-    <system-out><![CDATA[14:40:15.155 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [tn.esprit.tic.civiAgora.PortailApplicationTests]: PortailApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-14:40:15.417 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration tn.esprit.tic.civiAgora.civiAgoraApplication for test class tn.esprit.tic.civiAgora.PortailApplicationTests
+  <testcase name="contextLoads" classname="tn.esprit.tic.civiAgora.PortailApplicationTests" time="0.578">
+    <system-out><![CDATA[12:31:13.035 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [tn.esprit.tic.civiAgora.PortailApplicationTests]: PortailApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+12:31:13.188 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration tn.esprit.tic.civiAgora.civiAgoraApplication for test class tn.esprit.tic.civiAgora.PortailApplicationTests
 
   .   ____          _            __ _ _
  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
@@ -75,32 +75,88 @@
  =========|_|==============|___/=/_/_/_/
  :: Spring Boot ::                (v3.2.3)
 
-2026-04-14T14:40:16.542+01:00  INFO 24764 --- [           main] t.e.t.civiAgora.PortailApplicationTests  : Starting PortailApplicationTests using Java 17.0.12 with PID 24764 (started by Yassa in C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend)
-2026-04-14T14:40:16.547+01:00  INFO 24764 --- [           main] t.e.t.civiAgora.PortailApplicationTests  : No active profile set, falling back to 1 default profile: "default"
-2026-04-14T14:40:16.549+01:00 DEBUG 24764 --- [           main] o.s.boot.SpringApplication               : Loading source class tn.esprit.tic.civiAgora.civiAgoraApplication
-2026-04-14T14:40:16.636+01:00 DEBUG 24764 --- [           main] o.s.w.c.s.GenericWebApplicationContext   : Refreshing org.springframework.web.context.support.GenericWebApplicationContext@24f43aa3
-2026-04-14T14:40:18.697+01:00  INFO 24764 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2026-04-14T14:40:18.746+01:00 DEBUG 24764 --- [           main] o.s.b.a.AutoConfigurationPackages        : @EnableAutoConfiguration was declared on a class in the package 'tn.esprit.tic.civiAgora'. Automatic @Repository and @Entity scanning is enabled.
-2026-04-14T14:40:18.969+01:00  INFO 24764 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 251 ms. Found 11 JPA repository interfaces.
-2026-04-14T14:40:20.286+01:00  INFO 24764 --- [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2026-04-14T14:40:20.502+01:00  INFO 24764 --- [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.4.4.Final
-2026-04-14T14:40:20.613+01:00  INFO 24764 --- [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
-2026-04-14T14:40:21.353+01:00  INFO 24764 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2026-04-14T14:40:21.421+01:00  INFO 24764 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2026-04-14T14:40:21.763+01:00  INFO 24764 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@3f06ebe0
-2026-04-14T14:40:21.769+01:00  INFO 24764 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2026-04-14T14:40:21.820+01:00  WARN 24764 --- [           main] org.hibernate.orm.deprecation            : HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-04-14T14:40:21.822+01:00  WARN 24764 --- [           main] org.hibernate.orm.deprecation            : HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
-2026-04-14T14:40:24.443+01:00  INFO 24764 --- [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2026-04-14T14:40:24.865+01:00  INFO 24764 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2026-04-14T14:40:25.885+01:00  INFO 24764 --- [           main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
-2026-04-14T14:40:27.902+01:00  WARN 24764 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2026-04-14T14:40:28.314+01:00 DEBUG 24764 --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 56 mappings in 'requestMappingHandlerMapping'
-2026-04-14T14:40:28.678+01:00 DEBUG 24764 --- [           main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
-2026-04-14T14:40:28.772+01:00  INFO 24764 --- [           main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@3d49b00e, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@3d62648d, org.springframework.security.web.context.SecurityContextHolderFilter@7efaa137, org.springframework.security.web.header.HeaderWriterFilter@6fb9179e, org.springframework.web.filter.CorsFilter@59fe8d94, org.springframework.security.web.authentication.logout.LogoutFilter@7111b312, tn.esprit.tic.civiAgora.config.TenantResolutionFilter@3990d58e, tn.esprit.tic.civiAgora.config.JwtAuthenticationFilter@2522bea6, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@3828f303, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@3c7b89ae, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@479f5c35, org.springframework.security.web.session.SessionManagementFilter@1e4dc9fc, org.springframework.security.web.access.ExceptionTranslationFilter@5a0379e2, org.springframework.security.web.access.intercept.AuthorizationFilter@6b6d68d2]
-2026-04-14T14:40:29.212+01:00 DEBUG 24764 --- [           main] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
-2026-04-14T14:40:29.291+01:00 DEBUG 24764 --- [           main] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 1 @ExceptionHandler, 1 ResponseBodyAdvice
-2026-04-14T14:40:29.502+01:00 DEBUG 24764 --- [           main] .s.b.a.l.ConditionEvaluationReportLogger : 
+2026-05-12T12:31:13.722+01:00  INFO 24556 --- [           main] t.e.t.civiAgora.PortailApplicationTests  : Starting PortailApplicationTests using Java 17.0.12 with PID 24556 (started by Yassa in C:\Users\MSI\OneDrive\Bureau\CIVOX SaaS tst\CiviAgoraBackEnd\CiviAgora-Backend)
+2026-05-12T12:31:13.724+01:00  INFO 24556 --- [           main] t.e.t.civiAgora.PortailApplicationTests  : No active profile set, falling back to 1 default profile: "default"
+2026-05-12T12:31:13.726+01:00 DEBUG 24556 --- [           main] o.s.boot.SpringApplication               : Loading source class tn.esprit.tic.civiAgora.civiAgoraApplication
+2026-05-12T12:31:13.771+01:00 DEBUG 24556 --- [           main] o.s.w.c.s.GenericWebApplicationContext   : Refreshing org.springframework.web.context.support.GenericWebApplicationContext@5bbc9f97
+2026-05-12T12:31:15.004+01:00  INFO 24556 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-05-12T12:31:15.022+01:00 DEBUG 24556 --- [           main] o.s.b.a.AutoConfigurationPackages        : @EnableAutoConfiguration was declared on a class in the package 'tn.esprit.tic.civiAgora'. Automatic @Repository and @Entity scanning is enabled.
+2026-05-12T12:31:15.142+01:00  INFO 24556 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 130 ms. Found 12 JPA repository interfaces.
+2026-05-12T12:31:15.907+01:00  INFO 24556 --- [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-05-12T12:31:16.007+01:00  INFO 24556 --- [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.4.4.Final
+2026-05-12T12:31:16.059+01:00  INFO 24556 --- [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-05-12T12:31:16.488+01:00  INFO 24556 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-05-12T12:31:16.527+01:00  INFO 24556 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-05-12T12:31:16.745+01:00  INFO 24556 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@1f71e024
+2026-05-12T12:31:16.748+01:00  INFO 24556 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-05-12T12:31:16.778+01:00  WARN 24556 --- [           main] org.hibernate.orm.deprecation            : HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-05-12T12:31:16.781+01:00  WARN 24556 --- [           main] org.hibernate.orm.deprecation            : HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2026-05-12T12:31:18.374+01:00  INFO 24556 --- [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-05-12T12:31:18.682+01:00  INFO 24556 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-05-12T12:31:19.186+01:00  INFO 24556 --- [           main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-05-12T12:31:20.572+01:00  WARN 24556 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-05-12T12:31:20.852+01:00 DEBUG 24556 --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 66 mappings in 'requestMappingHandlerMapping'
+2026-05-12T12:31:21.029+01:00 DEBUG 24556 --- [           main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2026-05-12T12:31:21.093+01:00  INFO 24556 --- [           main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@5afef53, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@3a19b933, org.springframework.security.web.context.SecurityContextHolderFilter@1d7201cb, org.springframework.security.web.header.HeaderWriterFilter@477b8d7d, org.springframework.web.filter.CorsFilter@d476a21, org.springframework.security.web.authentication.logout.LogoutFilter@ccdd8a6, tn.esprit.tic.civiAgora.config.TenantResolutionFilter@470c40be, tn.esprit.tic.civiAgora.config.JwtAuthenticationFilter@70fdecff, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@39dbea69, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@2142754a, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@186b5db, org.springframework.security.web.session.SessionManagementFilter@77ae2d25, org.springframework.security.web.access.ExceptionTranslationFilter@58ae3cb, org.springframework.security.web.access.intercept.AuthorizationFilter@37711f1a]
+2026-05-12T12:31:21.341+01:00 DEBUG 24556 --- [           main] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2026-05-12T12:31:21.397+01:00 DEBUG 24556 --- [           main] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 1 @ExceptionHandler, 1 ResponseBodyAdvice
+DEBUG: Jakarta Mail version 2.1.2
+DEBUG: URL jar:file:/C:/Users/MSI/.m2/repository/org/eclipse/angus/jakarta.mail/2.0.2/jakarta.mail-2.0.2.jar!/META-INF/javamail.providers
+DEBUG: successfully loaded resource: jar:file:/C:/Users/MSI/.m2/repository/org/eclipse/angus/jakarta.mail/2.0.2/jakarta.mail-2.0.2.jar!/META-INF/javamail.providers
+DEBUG: successfully loaded resource: /META-INF/javamail.default.providers
+DEBUG: Tables of loaded providers
+DEBUG: Providers Listed By Class Name: {org.eclipse.angus.mail.imap.IMAPStore=jakarta.mail.Provider[STORE,imap,org.eclipse.angus.mail.imap.IMAPStore,Oracle], org.eclipse.angus.mail.smtp.SMTPTransport=jakarta.mail.Provider[TRANSPORT,smtp,org.eclipse.angus.mail.smtp.SMTPTransport,Oracle], org.eclipse.angus.mail.pop3.POP3Store=jakarta.mail.Provider[STORE,pop3,org.eclipse.angus.mail.pop3.POP3Store,Oracle], org.eclipse.angus.mail.pop3.POP3SSLStore=jakarta.mail.Provider[STORE,pop3s,org.eclipse.angus.mail.pop3.POP3SSLStore,Oracle], org.eclipse.angus.mail.smtp.SMTPSSLTransport=jakarta.mail.Provider[TRANSPORT,smtps,org.eclipse.angus.mail.smtp.SMTPSSLTransport,Oracle], org.eclipse.angus.mail.imap.IMAPSSLStore=jakarta.mail.Provider[STORE,imaps,org.eclipse.angus.mail.imap.IMAPSSLStore,Oracle]}
+DEBUG: Providers Listed By Protocol: {imap=jakarta.mail.Provider[STORE,imap,org.eclipse.angus.mail.imap.IMAPStore,Oracle], smtp=jakarta.mail.Provider[TRANSPORT,smtp,org.eclipse.angus.mail.smtp.SMTPTransport,Oracle], pop3=jakarta.mail.Provider[STORE,pop3,org.eclipse.angus.mail.pop3.POP3Store,Oracle], imaps=jakarta.mail.Provider[STORE,imaps,org.eclipse.angus.mail.imap.IMAPSSLStore,Oracle], smtps=jakarta.mail.Provider[TRANSPORT,smtps,org.eclipse.angus.mail.smtp.SMTPSSLTransport,Oracle], pop3s=jakarta.mail.Provider[STORE,pop3s,org.eclipse.angus.mail.pop3.POP3SSLStore,Oracle]}
+DEBUG: successfully loaded resource: /META-INF/javamail.default.address.map
+DEBUG: URL jar:file:/C:/Users/MSI/.m2/repository/org/eclipse/angus/jakarta.mail/2.0.2/jakarta.mail-2.0.2.jar!/META-INF/javamail.address.map
+DEBUG: successfully loaded resource: jar:file:/C:/Users/MSI/.m2/repository/org/eclipse/angus/jakarta.mail/2.0.2/jakarta.mail-2.0.2.jar!/META-INF/javamail.address.map
+DEBUG: getProvider() returning jakarta.mail.Provider[TRANSPORT,smtp,org.eclipse.angus.mail.smtp.SMTPTransport,Oracle]
+DEBUG SMTP: useEhlo true, useAuth true
+DEBUG SMTP: trying to connect to host "smtp.gmail.com", port 587, isSSL false
+220 smtp.gmail.com ESMTP 5b1f17b1804b1-48e90536122sm42264775e9.4 - gsmtp
+DEBUG SMTP: connected to host "smtp.gmail.com", port: 587
+EHLO Yassine-Desktop
+250-smtp.gmail.com at your service, [102.31.146.74]
+250-SIZE 35882577
+250-8BITMIME
+250-STARTTLS
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250-CHUNKING
+250 SMTPUTF8
+DEBUG SMTP: Found extension "SIZE", arg "35882577"
+DEBUG SMTP: Found extension "8BITMIME", arg ""
+DEBUG SMTP: Found extension "STARTTLS", arg ""
+DEBUG SMTP: Found extension "ENHANCEDSTATUSCODES", arg ""
+DEBUG SMTP: Found extension "PIPELINING", arg ""
+DEBUG SMTP: Found extension "CHUNKING", arg ""
+DEBUG SMTP: Found extension "SMTPUTF8", arg ""
+STARTTLS
+220 2.0.0 Ready to start TLS
+EHLO Yassine-Desktop
+250-smtp.gmail.com at your service, [102.31.146.74]
+250-SIZE 35882577
+250-8BITMIME
+250-AUTH LOGIN PLAIN XOAUTH2 PLAIN-CLIENTTOKEN OAUTHBEARER XOAUTH
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250-CHUNKING
+250 SMTPUTF8
+DEBUG SMTP: Found extension "SIZE", arg "35882577"
+DEBUG SMTP: Found extension "8BITMIME", arg ""
+DEBUG SMTP: Found extension "AUTH", arg "LOGIN PLAIN XOAUTH2 PLAIN-CLIENTTOKEN OAUTHBEARER XOAUTH"
+DEBUG SMTP: Found extension "ENHANCEDSTATUSCODES", arg ""
+DEBUG SMTP: Found extension "PIPELINING", arg ""
+DEBUG SMTP: Found extension "CHUNKING", arg ""
+DEBUG SMTP: Found extension "SMTPUTF8", arg ""
+DEBUG SMTP: protocolConnect login, host=smtp.gmail.com, user=technologybri@gmail.com, password=<non-null>
+DEBUG SMTP: Attempt to authenticate using mechanisms: LOGIN PLAIN DIGEST-MD5 NTLM XOAUTH2 
+DEBUG SMTP: Using mechanism LOGIN
+DEBUG SMTP: AUTH LOGIN command trace suppressed
+DEBUG SMTP: AUTH LOGIN succeeded
+QUIT
+221 2.0.0 closing connection 5b1f17b1804b1-48e90536122sm42264775e9.4 - gsmtp
+2026-05-12T12:31:22.334+01:00 DEBUG 24556 --- [           main] .s.b.a.l.ConditionEvaluationReportLogger : 
 
 
 ============================
@@ -308,6 +364,10 @@ Positive matches:
 
    MailSenderPropertiesConfiguration#mailSender matched:
       - @ConditionalOnMissingBean (types: org.springframework.mail.javamail.JavaMailSender; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   MailSenderValidatorAutoConfiguration matched:
+      - @ConditionalOnProperty (spring.mail.test-connection) matched (OnPropertyCondition)
+      - @ConditionalOnSingleCandidate (types: org.springframework.mail.javamail.JavaMailSenderImpl; SearchStrategy: all) found a single bean 'mailSender' (OnBeanCondition)
 
    MultipartAutoConfiguration matched:
       - @ConditionalOnClass found required classes 'jakarta.servlet.Servlet', 'org.springframework.web.multipart.support.StandardServletMultipartResolver', 'jakarta.servlet.MultipartConfigElement' (OnClassCondition)
@@ -607,6 +667,10 @@ Negative matches:
       Did not match:
          - @ConditionalOnClass did not find required class 'com.couchbase.client.java.Bucket' (OnClassCondition)
 
+   DataInitializer:
+      Did not match:
+         - @ConditionalOnProperty (civox.seed.demo-data=true) did not find property 'civox.seed.demo-data' (OnPropertyCondition)
+
    DataSourceAutoConfiguration.EmbeddedDatabaseConfiguration:
       Did not match:
          - EmbeddedDataSource spring.datasource.url is set (DataSourceAutoConfiguration.EmbeddedDatabaseCondition)
@@ -860,10 +924,6 @@ Negative matches:
          - @ConditionalOnProperty (spring.mail.jndi-name) did not find property 'jndi-name' (OnPropertyCondition)
       Matched:
          - @ConditionalOnClass found required class 'jakarta.mail.Session' (OnClassCondition)
-
-   MailSenderValidatorAutoConfiguration:
-      Did not match:
-         - @ConditionalOnProperty (spring.mail.test-connection) found different value in property 'test-connection' (OnPropertyCondition)
 
    MessageSourceAutoConfiguration:
       Did not match:
@@ -1233,95 +1293,59 @@ Unconditional classes:
 
 
 
-2026-04-14T14:40:29.518+01:00  INFO 24764 --- [           main] t.e.t.civiAgora.PortailApplicationTests  : Started PortailApplicationTests in 13.702 seconds (process running for 15.992)
-2026-04-14T14:40:29.520+01:00 DEBUG 24764 --- [           main] o.s.b.a.ApplicationAvailabilityBean      : Application availability state LivenessState changed to CORRECT
-2026-04-14T14:40:29.797+01:00 DEBUG 24764 --- [           main] org.hibernate.SQL                        : select m1_0.id,m1_0.active,m1_0.code,m1_0.description,m1_0.name from modules m1_0 where m1_0.code=?
-2026-04-14T14:40:29.846+01:00 DEBUG 24764 --- [           main] org.hibernate.SQL                        : select m1_0.id,m1_0.active,m1_0.code,m1_0.description,m1_0.name from modules m1_0 where m1_0.code=?
-2026-04-14T14:40:29.854+01:00 DEBUG 24764 --- [           main] org.hibernate.SQL                        : select m1_0.id,m1_0.active,m1_0.code,m1_0.description,m1_0.name from modules m1_0 where m1_0.code=?
-2026-04-14T14:40:29.865+01:00 DEBUG 24764 --- [           main] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL query
-2026-04-14T14:40:29.866+01:00 DEBUG 24764 --- [           main] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL statement [SELECT COUNT(*)
+2026-05-12T12:31:22.345+01:00  INFO 24556 --- [           main] t.e.t.civiAgora.PortailApplicationTests  : Started PortailApplicationTests in 8.971 seconds (process running for 10.209)
+2026-05-12T12:31:22.347+01:00 DEBUG 24556 --- [           main] o.s.b.a.ApplicationAvailabilityBean      : Application availability state LivenessState changed to CORRECT
+2026-05-12T12:31:22.512+01:00 DEBUG 24556 --- [           main] org.hibernate.SQL                        : select m1_0.id,m1_0.active,m1_0.code,m1_0.description,m1_0.name from modules m1_0 where m1_0.code=?
+2026-05-12T12:31:22.542+01:00 DEBUG 24556 --- [           main] org.hibernate.SQL                        : select m1_0.id,m1_0.active,m1_0.code,m1_0.description,m1_0.name from modules m1_0 where m1_0.code=?
+2026-05-12T12:31:22.546+01:00 DEBUG 24556 --- [           main] org.hibernate.SQL                        : select m1_0.id,m1_0.active,m1_0.code,m1_0.description,m1_0.name from modules m1_0 where m1_0.code=?
+2026-05-12T12:31:22.548+01:00 DEBUG 24556 --- [           main] org.hibernate.SQL                        : select m1_0.id,m1_0.active,m1_0.code,m1_0.description,m1_0.name from modules m1_0 where m1_0.code=?
+2026-05-12T12:31:22.552+01:00 DEBUG 24556 --- [           main] org.hibernate.SQL                        : select m1_0.id,m1_0.active,m1_0.code,m1_0.description,m1_0.name from modules m1_0 where m1_0.code=?
+2026-05-12T12:31:22.556+01:00 DEBUG 24556 --- [           main] org.hibernate.SQL                        : select m1_0.id,m1_0.active,m1_0.code,m1_0.description,m1_0.name from modules m1_0 where m1_0.code=?
+2026-05-12T12:31:22.558+01:00 DEBUG 24556 --- [           main] org.hibernate.SQL                        : select m1_0.id,m1_0.active,m1_0.code,m1_0.description,m1_0.name from modules m1_0 where m1_0.code=?
+2026-05-12T12:31:22.561+01:00 DEBUG 24556 --- [           main] org.hibernate.SQL                        : select m1_0.id,m1_0.active,m1_0.code,m1_0.description,m1_0.name from modules m1_0 where m1_0.code=?
+2026-05-12T12:31:22.569+01:00 DEBUG 24556 --- [           main] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL query
+2026-05-12T12:31:22.571+01:00 DEBUG 24556 --- [           main] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL statement [SELECT COUNT(*)
 FROM information_schema.columns
 WHERE table_schema = DATABASE()
   AND table_name = ?
   AND column_name = ?
 ]
-2026-04-14T14:40:29.912+01:00 DEBUG 24764 --- [           main] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL query
-2026-04-14T14:40:29.912+01:00 DEBUG 24764 --- [           main] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL statement [SELECT data_type, character_maximum_length, column_type
+2026-05-12T12:31:22.602+01:00 DEBUG 24556 --- [           main] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL query
+2026-05-12T12:31:22.602+01:00 DEBUG 24556 --- [           main] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL statement [SELECT data_type, character_maximum_length, column_type
 FROM information_schema.columns
 WHERE table_schema = DATABASE()
   AND table_name = ?
   AND column_name = ?
 ]
-2026-04-14T14:40:29.941+01:00 DEBUG 24764 --- [           main] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL query
-2026-04-14T14:40:29.941+01:00 DEBUG 24764 --- [           main] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL statement [SELECT COUNT(*)
+2026-05-12T12:31:22.624+01:00 DEBUG 24556 --- [           main] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL query
+2026-05-12T12:31:22.624+01:00 DEBUG 24556 --- [           main] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL statement [SELECT COUNT(*)
 FROM information_schema.columns
 WHERE table_schema = DATABASE()
   AND table_name = ?
   AND column_name = ?
 ]
-2026-04-14T14:40:29.954+01:00 DEBUG 24764 --- [           main] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL query
-2026-04-14T14:40:29.954+01:00 DEBUG 24764 --- [           main] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL statement [SELECT data_type, character_maximum_length, column_type
+2026-05-12T12:31:22.637+01:00 DEBUG 24556 --- [           main] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL query
+2026-05-12T12:31:22.638+01:00 DEBUG 24556 --- [           main] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL statement [SELECT data_type, character_maximum_length, column_type
 FROM information_schema.columns
 WHERE table_schema = DATABASE()
   AND table_name = ?
   AND column_name = ?
 ]
-2026-04-14T14:40:29.965+01:00 DEBUG 24764 --- [           main] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL query
-2026-04-14T14:40:29.965+01:00 DEBUG 24764 --- [           main] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL statement [SELECT COUNT(*)
+2026-05-12T12:31:22.646+01:00 DEBUG 24556 --- [           main] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL query
+2026-05-12T12:31:22.646+01:00 DEBUG 24556 --- [           main] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL statement [SELECT COUNT(*)
 FROM information_schema.columns
 WHERE table_schema = DATABASE()
   AND table_name = ?
   AND column_name = ?
 ]
-2026-04-14T14:40:29.977+01:00 DEBUG 24764 --- [           main] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL query
-2026-04-14T14:40:29.979+01:00 DEBUG 24764 --- [           main] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL statement [SELECT data_type, character_maximum_length, column_type
+2026-05-12T12:31:22.654+01:00 DEBUG 24556 --- [           main] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL query
+2026-05-12T12:31:22.654+01:00 DEBUG 24556 --- [           main] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL statement [SELECT data_type, character_maximum_length, column_type
 FROM information_schema.columns
 WHERE table_schema = DATABASE()
   AND table_name = ?
   AND column_name = ?
 ]
-2026-04-14T14:40:29.995+01:00 DEBUG 24764 --- [           main] org.hibernate.SQL                        : select o1_0.id,o1_0.organization_logo_url,o1_0.address,o1_0.created_at,o1_0.description,o1_0.email,o1_0.name,o1_0.phone,o1_0.processes_count,o1_0.slug,o1_0.status,o1_0.users_count from organizations o1_0 where o1_0.slug=?
-2026-04-14T14:40:30.003+01:00 DEBUG 24764 --- [           main] org.hibernate.SQL                        : select o1_0.id,o1_0.organization_logo_url,o1_0.address,o1_0.created_at,o1_0.description,o1_0.email,o1_0.name,o1_0.phone,o1_0.processes_count,o1_0.slug,o1_0.status,o1_0.users_count from organizations o1_0 where o1_0.slug=?
-2026-04-14T14:40:30.007+01:00 DEBUG 24764 --- [           main] org.hibernate.SQL                        : select o1_0.id,o1_0.organization_logo_url,o1_0.address,o1_0.created_at,o1_0.description,o1_0.email,o1_0.name,o1_0.phone,o1_0.processes_count,o1_0.slug,o1_0.status,o1_0.users_count from organizations o1_0 where o1_0.slug=?
-2026-04-14T14:40:30.013+01:00 DEBUG 24764 --- [           main] org.hibernate.SQL                        : select o1_0.id,o1_0.organization_logo_url,o1_0.address,o1_0.created_at,o1_0.description,o1_0.email,o1_0.name,o1_0.phone,o1_0.processes_count,o1_0.slug,o1_0.status,o1_0.users_count from organizations o1_0 where o1_0.slug=?
-2026-04-14T14:40:30.020+01:00 DEBUG 24764 --- [           main] org.hibernate.SQL                        : select o1_0.id,o1_0.organization_logo_url,o1_0.address,o1_0.created_at,o1_0.description,o1_0.email,o1_0.name,o1_0.phone,o1_0.processes_count,o1_0.slug,o1_0.status,o1_0.users_count from organizations o1_0 where o1_0.slug=?
-2026-04-14T14:40:30.026+01:00 DEBUG 24764 --- [           main] org.hibernate.SQL                        : select o1_0.id,o1_0.organization_logo_url,o1_0.address,o1_0.created_at,o1_0.description,o1_0.email,o1_0.name,o1_0.phone,o1_0.processes_count,o1_0.slug,o1_0.status,o1_0.users_count from organizations o1_0 where o1_0.slug=?
-2026-04-14T14:40:30.031+01:00 DEBUG 24764 --- [           main] org.hibernate.SQL                        : select o1_0.id,o1_0.organization_logo_url,o1_0.address,o1_0.created_at,o1_0.description,o1_0.email,o1_0.name,o1_0.phone,o1_0.processes_count,o1_0.slug,o1_0.status,o1_0.users_count from organizations o1_0 where o1_0.slug=?
-2026-04-14T14:40:30.038+01:00 DEBUG 24764 --- [           main] org.hibernate.SQL                        : select o1_0.id,o1_0.organization_logo_url,o1_0.address,o1_0.created_at,o1_0.description,o1_0.email,o1_0.name,o1_0.phone,o1_0.processes_count,o1_0.slug,o1_0.status,o1_0.users_count from organizations o1_0 where o1_0.slug=?
-2026-04-14T14:40:30.044+01:00 DEBUG 24764 --- [           main] org.hibernate.SQL                        : select o1_0.id,o1_0.organization_logo_url,o1_0.address,o1_0.created_at,o1_0.description,o1_0.email,o1_0.name,o1_0.phone,o1_0.processes_count,o1_0.slug,o1_0.status,o1_0.users_count from organizations o1_0 where o1_0.slug=?
-2026-04-14T14:40:30.050+01:00 DEBUG 24764 --- [           main] org.hibernate.SQL                        : select o1_0.id,o1_0.organization_logo_url,o1_0.address,o1_0.created_at,o1_0.description,o1_0.email,o1_0.name,o1_0.phone,o1_0.processes_count,o1_0.slug,o1_0.status,o1_0.users_count from organizations o1_0 where o1_0.slug=?
-2026-04-14T14:40:30.075+01:00 DEBUG 24764 --- [           main] org.hibernate.SQL                        : select os1_0.id,os1_0.banner_image_url,os1_0.footer_text,os1_0.home_title,os1_0.logo_url,os1_0.organization_id,os1_0.primary_color,os1_0.secondary_color,os1_0.welcome_text from organization_settings os1_0 join organizations o1_0 on o1_0.id=os1_0.organization_id where o1_0.id=?
-2026-04-14T14:40:30.088+01:00 DEBUG 24764 --- [           main] org.hibernate.SQL                        : select os1_0.id,os1_0.banner_image_url,os1_0.footer_text,os1_0.home_title,os1_0.logo_url,os1_0.organization_id,os1_0.primary_color,os1_0.secondary_color,os1_0.welcome_text from organization_settings os1_0 join organizations o1_0 on o1_0.id=os1_0.organization_id where o1_0.id=?
-2026-04-14T14:40:30.094+01:00 DEBUG 24764 --- [           main] org.hibernate.SQL                        : select os1_0.id,os1_0.banner_image_url,os1_0.footer_text,os1_0.home_title,os1_0.logo_url,os1_0.organization_id,os1_0.primary_color,os1_0.secondary_color,os1_0.welcome_text from organization_settings os1_0 join organizations o1_0 on o1_0.id=os1_0.organization_id where o1_0.id=?
-2026-04-14T14:40:30.101+01:00 DEBUG 24764 --- [           main] org.hibernate.SQL                        : select os1_0.id,os1_0.banner_image_url,os1_0.footer_text,os1_0.home_title,os1_0.logo_url,os1_0.organization_id,os1_0.primary_color,os1_0.secondary_color,os1_0.welcome_text from organization_settings os1_0 join organizations o1_0 on o1_0.id=os1_0.organization_id where o1_0.id=?
-2026-04-14T14:40:30.105+01:00 DEBUG 24764 --- [           main] org.hibernate.SQL                        : select os1_0.id,os1_0.banner_image_url,os1_0.footer_text,os1_0.home_title,os1_0.logo_url,os1_0.organization_id,os1_0.primary_color,os1_0.secondary_color,os1_0.welcome_text from organization_settings os1_0 join organizations o1_0 on o1_0.id=os1_0.organization_id where o1_0.id=?
-2026-04-14T14:40:30.111+01:00 DEBUG 24764 --- [           main] org.hibernate.SQL                        : select os1_0.id,os1_0.banner_image_url,os1_0.footer_text,os1_0.home_title,os1_0.logo_url,os1_0.organization_id,os1_0.primary_color,os1_0.secondary_color,os1_0.welcome_text from organization_settings os1_0 join organizations o1_0 on o1_0.id=os1_0.organization_id where o1_0.id=?
-2026-04-14T14:40:30.117+01:00 DEBUG 24764 --- [           main] org.hibernate.SQL                        : select os1_0.id,os1_0.banner_image_url,os1_0.footer_text,os1_0.home_title,os1_0.logo_url,os1_0.organization_id,os1_0.primary_color,os1_0.secondary_color,os1_0.welcome_text from organization_settings os1_0 join organizations o1_0 on o1_0.id=os1_0.organization_id where o1_0.id=?
-2026-04-14T14:40:30.121+01:00 DEBUG 24764 --- [           main] org.hibernate.SQL                        : select os1_0.id,os1_0.banner_image_url,os1_0.footer_text,os1_0.home_title,os1_0.logo_url,os1_0.organization_id,os1_0.primary_color,os1_0.secondary_color,os1_0.welcome_text from organization_settings os1_0 join organizations o1_0 on o1_0.id=os1_0.organization_id where o1_0.id=?
-2026-04-14T14:40:30.127+01:00 DEBUG 24764 --- [           main] org.hibernate.SQL                        : select os1_0.id,os1_0.banner_image_url,os1_0.footer_text,os1_0.home_title,os1_0.logo_url,os1_0.organization_id,os1_0.primary_color,os1_0.secondary_color,os1_0.welcome_text from organization_settings os1_0 join organizations o1_0 on o1_0.id=os1_0.organization_id where o1_0.id=?
-2026-04-14T14:40:30.131+01:00 DEBUG 24764 --- [           main] org.hibernate.SQL                        : select os1_0.id,os1_0.banner_image_url,os1_0.footer_text,os1_0.home_title,os1_0.logo_url,os1_0.organization_id,os1_0.primary_color,os1_0.secondary_color,os1_0.welcome_text from organization_settings os1_0 join organizations o1_0 on o1_0.id=os1_0.organization_id where o1_0.id=?
-2026-04-14T14:40:30.143+01:00 DEBUG 24764 --- [           main] org.hibernate.SQL                        : select u1_0.id from user u1_0 where u1_0.email=? limit ?
-2026-04-14T14:40:30.151+01:00 DEBUG 24764 --- [           main] org.hibernate.SQL                        : select u1_0.id from user u1_0 where u1_0.email=? limit ?
-2026-04-14T14:40:30.155+01:00 DEBUG 24764 --- [           main] org.hibernate.SQL                        : select u1_0.id from user u1_0 where u1_0.email=? limit ?
-2026-04-14T14:40:30.159+01:00 DEBUG 24764 --- [           main] org.hibernate.SQL                        : select u1_0.id from user u1_0 where u1_0.email=? limit ?
-2026-04-14T14:40:30.163+01:00 DEBUG 24764 --- [           main] org.hibernate.SQL                        : select u1_0.id from user u1_0 where u1_0.email=? limit ?
-2026-04-14T14:40:30.166+01:00 DEBUG 24764 --- [           main] org.hibernate.SQL                        : select u1_0.id from user u1_0 where u1_0.email=? limit ?
-2026-04-14T14:40:30.170+01:00 DEBUG 24764 --- [           main] org.hibernate.SQL                        : select u1_0.id from user u1_0 where u1_0.email=? limit ?
-2026-04-14T14:40:30.174+01:00 DEBUG 24764 --- [           main] org.hibernate.SQL                        : select u1_0.id from user u1_0 where u1_0.email=? limit ?
-2026-04-14T14:40:30.178+01:00 DEBUG 24764 --- [           main] org.hibernate.SQL                        : select u1_0.id from user u1_0 where u1_0.email=? limit ?
-2026-04-14T14:40:30.181+01:00 DEBUG 24764 --- [           main] org.hibernate.SQL                        : select u1_0.id from user u1_0 where u1_0.email=? limit ?
-2026-04-14T14:40:30.185+01:00 DEBUG 24764 --- [           main] org.hibernate.SQL                        : select u1_0.id from user u1_0 where u1_0.email=? limit ?
-2026-04-14T14:40:30.188+01:00 DEBUG 24764 --- [           main] org.hibernate.SQL                        : select u1_0.id from user u1_0 where u1_0.email=? limit ?
-2026-04-14T14:40:30.190+01:00 DEBUG 24764 --- [           main] org.hibernate.SQL                        : select u1_0.id from user u1_0 where u1_0.email=? limit ?
-2026-04-14T14:40:30.193+01:00 DEBUG 24764 --- [           main] org.hibernate.SQL                        : select u1_0.id from user u1_0 where u1_0.email=? limit ?
-2026-04-14T14:40:30.197+01:00 DEBUG 24764 --- [           main] org.hibernate.SQL                        : select u1_0.id from user u1_0 where u1_0.email=? limit ?
-2026-04-14T14:40:30.201+01:00 DEBUG 24764 --- [           main] org.hibernate.SQL                        : select u1_0.id from user u1_0 where u1_0.email=? limit ?
-2026-04-14T14:40:30.205+01:00 DEBUG 24764 --- [           main] org.hibernate.SQL                        : select u1_0.id from user u1_0 where u1_0.email=? limit ?
-2026-04-14T14:40:30.207+01:00 DEBUG 24764 --- [           main] org.hibernate.SQL                        : select u1_0.id from user u1_0 where u1_0.email=? limit ?
-2026-04-14T14:40:30.212+01:00 DEBUG 24764 --- [           main] org.hibernate.SQL                        : select u1_0.id from user u1_0 where u1_0.email=? limit ?
-2026-04-14T14:40:30.216+01:00 DEBUG 24764 --- [           main] org.hibernate.SQL                        : select u1_0.id from user u1_0 where u1_0.email=? limit ?
-✅ 10 organizations + organization settings + 20 users safely added
-2026-04-14T14:40:30.220+01:00 DEBUG 24764 --- [           main] o.s.b.a.ApplicationAvailabilityBean      : Application availability state ReadinessState changed to ACCEPTING_TRAFFIC
+2026-05-12T12:31:22.663+01:00 DEBUG 24556 --- [           main] o.s.b.a.ApplicationAvailabilityBean      : Application availability state ReadinessState changed to ACCEPTING_TRAFFIC
 ]]></system-out>
   </testcase>
 </testsuite>

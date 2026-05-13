@@ -12,5 +12,8 @@ public interface OrganizationModuleRepository extends JpaRepository<Organization
     List<OrganizationModule> findByOrganizationId(Integer organizationId);
     List<OrganizationModule> findByOrganizationIdAndGrantedBySaasTrue(Integer organizationId);
     List<OrganizationModule> findByOrganizationIdAndGrantedBySaasTrueAndEnabledByOrganizationTrueOrderByDisplayOrderAsc(Integer organizationId);
+    Optional<OrganizationModule> findByOrganizationIdAndModuleId(Integer organizationId, Long moduleId);
+    Optional<OrganizationModule> findByOrganizationIdAndModuleIdAndGrantedBySaasTrue(Integer organizationId, Long moduleId);
     Optional<OrganizationModule> findByOrganizationIdAndModuleCode(Integer organizationId, String code);
+    long countByModuleIdAndGrantedBySaasTrue(Long moduleId);
 }

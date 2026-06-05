@@ -20,6 +20,11 @@ public class PaymentActivationService {
 
     @Transactional
     public OrganizationRequest markPaymentCompleted(OrganizationRequest request, String processedBy) {
+        return markPaymentCompleted(request, processedBy, null);
+    }
+
+    @Transactional
+    public OrganizationRequest markPaymentCompleted(OrganizationRequest request, String processedBy, String stripeSessionId) {
         if (request.getRequestStatus() == OrganizationRequestStatus.DECLINED
                 || request.getRequestStatus() == OrganizationRequestStatus.REJECTED
                 || request.getRequestStatus() == OrganizationRequestStatus.CANCELLED) {
@@ -44,6 +49,9 @@ public class PaymentActivationService {
         request.setRequestStatus(OrganizationRequestStatus.PAID);
         request.setPaidAt(now);
         request.setProcessedBy(processedBy);
+        if (stripeSessionId != null && !stripeSessionId.isBlank()) {
+            request.setStripeSessionId(stripeSessionId);
+        }
         request.setUpdatedAt(now);
 
         Organization organization = provisioningService.activateRequest(request);

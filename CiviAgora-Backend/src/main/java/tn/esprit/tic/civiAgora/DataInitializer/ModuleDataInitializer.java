@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import tn.esprit.tic.civiAgora.dao.entity.Module;
+import tn.esprit.tic.civiAgora.dao.entity.enums.ModuleScope;
 import tn.esprit.tic.civiAgora.dao.repository.ModuleRepository;
 
 @Component
@@ -14,26 +15,31 @@ public class ModuleDataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        createModuleIfNotExists("VOTE", "Voting", "Online votes, polls, eligibility controls, and result publishing.");
-        createModuleIfNotExists("CONFERENCE", "Concertation", "Public consultation spaces with moderation and discussion threads.");
-        createModuleIfNotExists("YOUTHSPACE", "Youth Space", "Dedicated civic participation area for youth programs.");
-        createModuleIfNotExists("EVENTS", "Events", "Event publishing, registrations, attendance, and reminders.");
-        createModuleIfNotExists("SURVEYS", "Surveys", "Structured questionnaires with exports and branching logic.");
-        createModuleIfNotExists("COMPLAINTS", "Complaints", "Issue reporting, routing, and public service tracking.");
-        createModuleIfNotExists("NEWS", "News", "Official announcements and tenant news feeds.");
-        createModuleIfNotExists("ANALYTICS", "Analytics", "Participation analytics, exports, and executive dashboards.");
+        createOrUpdateModule("VOTE", "Voting", "Online votes, polls, eligibility controls, and result publishing.", ModuleScope.BOTH);
+        createOrUpdateModule("CONFERENCE", "Concertation", "Public consultation spaces with moderation and discussion threads.", ModuleScope.BOTH);
+        createOrUpdateModule("YOUTHSPACE", "Youth Space", "Dedicated civic participation area for youth programs.", ModuleScope.BOTH);
+        createOrUpdateModule("EVENTS", "Events", "Event publishing, registrations, attendance, and reminders.", ModuleScope.BOTH);
+        createOrUpdateModule("SURVEYS", "Surveys", "Structured questionnaires with exports and branching logic.", ModuleScope.BOTH);
+        createOrUpdateModule("COMPLAINTS", "Complaints", "Issue reporting, routing, and public service tracking.", ModuleScope.BOTH);
+        createOrUpdateModule("NEWS", "News", "Official announcements and tenant news feeds.", ModuleScope.BOTH);
+        createOrUpdateModule("ANALYTICS", "Analytics", "Participation analytics, exports, and executive dashboards.", ModuleScope.BACK_OFFICE);
     }
 
-    private void createModuleIfNotExists(String code, String name, String description) {
-        moduleRepository.findByCode(code).orElseGet(() ->
-                moduleRepository.save(
-                        Module.builder()
-                                .code(code)
-                                .name(name)
-                                .description(description)
-                                .active(true)
-                                .build()
-                )
-        );
+    private void createOrUpdateModule(String code, String name, String description, ModuleScope scope) {
+        moduleRepository.findByCode(code).ifPresentOrElse(existing -> {
+            ModuleScope existingScope = ModuleScope.resolveOrDefault(existing.getScope());
+            if (existingScope != scope) {
+                existing.setScope(scope);
+                moduleRepository.save(existing);
+            }
+        }, () -> moduleRepository.save(
+                Module.builder()
+                        .code(code)
+                        .name(name)
+                        .description(description)
+                        .scope(scope)
+                        .active(true)
+                        .build()
+        ));
     }
 }

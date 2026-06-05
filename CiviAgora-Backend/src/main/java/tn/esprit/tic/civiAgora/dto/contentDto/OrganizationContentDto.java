@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Map;
 
 @Data
 @Builder
@@ -25,4 +26,6 @@ public class OrganizationContentDto {
     private String myAnswer;
     private Boolean myParticipating;
     private String myReaction;
+    private Long totalResponses;
+    private Map<String, Long> responseBreakdown;
 }

@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface OrganizationContentResponseRepository extends JpaRepository<OrganizationContentResponse, Long> {
+    List<OrganizationContentResponse> findByOrganizationId(Integer organizationId);
+
     Optional<OrganizationContentResponse> findByOrganizationIdAndContentItemIdAndUserId(
             Integer organizationId,
             Long contentItemId,
@@ -18,4 +20,6 @@ public interface OrganizationContentResponseRepository extends JpaRepository<Org
             Integer userId,
             List<Long> contentItemIds
     );
+
+    List<OrganizationContentResponse> findByContentItemIdIn(List<Long> contentItemIds);
 }

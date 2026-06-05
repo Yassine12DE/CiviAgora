@@ -151,5 +151,8 @@ public class OrganizationRequest {
 
     private LocalDateTime paymentTokenCreatedAt;
 
+    @Column(length = 255)
+    private String stripeSessionId;
+
     private Integer organizationCreatedId;
 }

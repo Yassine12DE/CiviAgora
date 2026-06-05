@@ -3,9 +3,12 @@ package tn.esprit.tic.civiAgora.controller.back_office;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import tn.esprit.tic.civiAgora.dto.moduleDto.ModuleDto;
 import tn.esprit.tic.civiAgora.dto.moduleDto.OrganizationModuleDto;
 import tn.esprit.tic.civiAgora.dto.moduleRequestDto.ModuleRequestDto;
 import tn.esprit.tic.civiAgora.dto.organizationSettingsDto.OrganizationSettingsDto;
+import tn.esprit.tic.civiAgora.mappers.moduleMappers.ModuleMapper;
+import tn.esprit.tic.civiAgora.service.ModuleService;
 import tn.esprit.tic.civiAgora.service.ModuleRequestService;
 import tn.esprit.tic.civiAgora.service.OrganizationModuleService;
 import tn.esprit.tic.civiAgora.service.OrganizationSettingsService;
@@ -22,6 +25,8 @@ public class OrganizationBackOfficeController {
     private final OrganizationSettingsService organizationSettingsService;
     private final ModuleRequestService moduleRequestService;
     private final RbacService rbacService;
+    private final ModuleService moduleService;
+    private final ModuleMapper moduleMapper;
 
     @GetMapping("/modules")
     public ResponseEntity<List<OrganizationModuleDto>> getGrantedModules(
@@ -82,5 +87,18 @@ public class OrganizationBackOfficeController {
     ) {
         rbacService.requireTenantModuleRequestAccess(organizationId);
         return ResponseEntity.ok(moduleRequestService.getTenantRequestsByOrganization(organizationId));
+    }
+
+    @GetMapping("/module-catalog")
+    public ResponseEntity<List<ModuleDto>> getTenantModuleCatalog(
+            @PathVariable("organizationId") Integer organizationId
+    ) {
+        rbacService.requireTenantModuleRequestAccess(organizationId);
+        return ResponseEntity.ok(
+                moduleService.getTenantRequestableModules()
+                        .stream()
+                        .map(moduleMapper::toDto)
+                        .toList()
+        );
     }
 }

@@ -3,6 +3,7 @@ package tn.esprit.tic.civiAgora.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import tn.esprit.tic.civiAgora.dao.entity.Module;
+import tn.esprit.tic.civiAgora.dao.entity.enums.ModuleScope;
 import tn.esprit.tic.civiAgora.dao.repository.ModuleRepository;
 import tn.esprit.tic.civiAgora.dao.repository.OrganizationModuleRepository;
 import tn.esprit.tic.civiAgora.dao.repository.OrganizationRepository;
@@ -23,6 +24,20 @@ public class ModuleService {
 
     public List<Module> getAllModules() {
         return moduleRepository.findAll();
+    }
+
+    public List<Module> getFrontOfficePublicModules() {
+        return moduleRepository.findAll().stream()
+                .filter(this::isModuleActive)
+                .filter(module -> ModuleScope.resolveOrDefault(module.getScope()).allowsFrontOffice())
+                .toList();
+    }
+
+    public List<Module> getTenantRequestableModules() {
+        return moduleRepository.findAll().stream()
+                .filter(this::isModuleActive)
+                .filter(module -> ModuleScope.resolveOrDefault(module.getScope()).allowsTenantAssignment())
+                .toList();
     }
 
     public Module getModuleByCode(String code) {
@@ -52,6 +67,7 @@ public class ModuleService {
                     dto.setCode(module.getCode());
                     dto.setName(module.getName());
                     dto.setDescription(module.getDescription());
+                    dto.setScope(ModuleScope.resolveOrDefault(module.getScope()).name());
                     dto.setActive(Boolean.TRUE.equals(module.getActive()));
                     dto.setOrganizationsUsing(
                             organizationModuleRepository.countByModuleIdAndGrantedBySaasTrue(module.getId())
@@ -82,6 +98,7 @@ public class ModuleService {
                 .code(code)
                 .name(request.getName().trim())
                 .description(request.getDescription() == null ? null : request.getDescription().trim())
+                .scope(parseScope(request.getScope()))
                 .active(request.getActive() == null ? Boolean.TRUE : request.getActive())
                 .build();
 
@@ -110,10 +127,28 @@ public class ModuleService {
         if (request.getDescription() != null) {
             module.setDescription(request.getDescription().trim());
         }
+        if (request.getScope() != null) {
+            module.setScope(parseScope(request.getScope()));
+        }
         if (request.getActive() != null) {
             module.setActive(request.getActive());
         }
 
         return moduleRepository.save(module);
+    }
+
+    private ModuleScope parseScope(String scopeValue) {
+        if (scopeValue == null || scopeValue.isBlank()) {
+            return ModuleScope.BOTH;
+        }
+        try {
+            return ModuleScope.valueOf(scopeValue.trim().toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException ex) {
+            throw new IllegalArgumentException("Invalid module scope: " + scopeValue);
+        }
+    }
+
+    private boolean isModuleActive(Module module) {
+        return module != null && Boolean.TRUE.equals(module.getActive());
     }
 }

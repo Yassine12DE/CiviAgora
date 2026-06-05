@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import tn.esprit.tic.civiAgora.dao.entity.Module;
 import tn.esprit.tic.civiAgora.dao.entity.ModuleRequest;
 import tn.esprit.tic.civiAgora.dao.entity.Organization;
+import tn.esprit.tic.civiAgora.dao.entity.enums.ModuleScope;
 import tn.esprit.tic.civiAgora.dao.entity.enums.ModuleRequestStatus;
 import tn.esprit.tic.civiAgora.dao.repository.ModuleRequestRepository;
 import tn.esprit.tic.civiAgora.dao.repository.OrganizationRepository;
@@ -24,6 +25,7 @@ public class ModuleRequestService {
     private final OrganizationModuleService organizationModuleService;
     private final ModuleRequestMapper moduleRequestMapper;
     private final TenantAccessService tenantAccessService;
+    private final ModuleNotificationEmailService moduleNotificationEmailService;
 
     public List<ModuleRequestDto> getAllRequests() {
         return moduleRequestRepository.findAll()
@@ -60,6 +62,12 @@ public class ModuleRequestService {
         Organization organization = organizationRepository.findById(organizationId)
                 .orElseThrow(() -> new RuntimeException("Organization not found"));
         Module module = moduleService.getModuleByCode(moduleCode);
+        if (!Boolean.TRUE.equals(module.getActive())) {
+            throw new IllegalStateException("This module is currently inactive in the platform catalog");
+        }
+        if (!ModuleScope.resolveOrDefault(module.getScope()).allowsTenantAssignment()) {
+            throw new IllegalStateException("This module cannot be requested by tenant organizations");
+        }
 
         ModuleRequest request = ModuleRequest.builder()
                 .organization(organization)
@@ -81,6 +89,12 @@ public class ModuleRequestService {
         }
 
         Module module = moduleService.getModuleByCode(moduleCode);
+        if (!Boolean.TRUE.equals(module.getActive())) {
+            throw new IllegalStateException("This module is currently inactive in the platform catalog");
+        }
+        if (!ModuleScope.resolveOrDefault(module.getScope()).allowsTenantAssignment()) {
+            throw new IllegalStateException("This module cannot be requested by tenant organizations");
+        }
         ModuleRequest request = ModuleRequest.builder()
                 .organization(organization)
                 .module(module)
@@ -124,6 +138,12 @@ public class ModuleRequestService {
         request.setStatus(ModuleRequestStatus.REJECTED);
         request.setReviewedDate(LocalDateTime.now());
         request.setComment(comment);
+        moduleNotificationEmailService.sendModuleRequestRejectedNotification(
+                request.getOrganization(),
+                request.getModule().getName(),
+                request.getModule().getCode(),
+                comment
+        );
 
         return moduleRequestMapper.toDto(moduleRequestRepository.save(request));
     }

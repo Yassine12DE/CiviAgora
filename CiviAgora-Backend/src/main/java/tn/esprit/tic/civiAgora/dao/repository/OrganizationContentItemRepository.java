@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface OrganizationContentItemRepository extends JpaRepository<OrganizationContentItem, Long> {
+    List<OrganizationContentItem> findByOrganizationIdOrderByCreatedAtDesc(Integer organizationId);
+
     List<OrganizationContentItem> findByOrganizationIdAndTypeOrderByCreatedAtDesc(
             Integer organizationId,
             OrganizationContentType type

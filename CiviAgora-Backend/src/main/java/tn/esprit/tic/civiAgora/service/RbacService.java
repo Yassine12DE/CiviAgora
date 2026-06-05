@@ -58,6 +58,10 @@ public class RbacService {
         requireTenantRole(organizationId, Role.ADMIN, Role.MANAGER, Role.MODERATOR, Role.CITIZEN);
     }
 
+    public void requireTenantAnalyticsAccess(Integer organizationId) {
+        requireTenantRole(organizationId, Role.ADMIN, Role.MANAGER);
+    }
+
     public void requireTenantRole(Integer organizationId, Role... roles) {
         tenantAccessService.assertOrganizationAccessOrThrow(organizationId);
 

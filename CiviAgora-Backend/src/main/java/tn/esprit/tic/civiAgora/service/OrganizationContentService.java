@@ -1,6 +1,7 @@
 package tn.esprit.tic.civiAgora.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,8 @@ import tn.esprit.tic.civiAgora.dto.contentDto.OrganizationContentRequest;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -28,20 +31,41 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class OrganizationContentService {
 
     private final OrganizationContentItemRepository contentRepository;
     private final OrganizationContentResponseRepository responseRepository;
     private final OrganizationRepository organizationRepository;
     private final OrganizationModuleRepository organizationModuleRepository;
+    private final TenantAccessService tenantAccessService;
 
+    @Transactional(readOnly = true)
     public List<OrganizationContentDto> getContent(Integer organizationId, OrganizationContentType type) {
-        return contentRepository.findByOrganizationIdAndTypeOrderByCreatedAtDesc(organizationId, type)
-                .stream()
-                .map(this::toDto)
+        List<OrganizationContentItem> items =
+                contentRepository.findByOrganizationIdAndTypeOrderByCreatedAtDesc(organizationId, type);
+        Map<Long, ResponseSummary> summaries = buildResponseSummaries(items);
+
+        return items.stream()
+                .map(item -> toDto(item, null, summaries.get(item.getId())))
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    public List<OrganizationContentDto> getCurrentOrganizationPublicContent(OrganizationContentType type) {
+        Integer organizationId = tenantAccessService.getResolvedOrganizationOrThrow().getId();
+        requireModuleEnabled(organizationId, type);
+
+        List<OrganizationContentItem> items = contentRepository
+                .findByOrganizationIdAndTypeAndPublishedTrueOrderByCreatedAtDesc(organizationId, type);
+        Map<Long, ResponseSummary> summaries = buildResponseSummaries(items);
+
+        return items.stream()
+                .map(item -> toDto(item, null, summaries.get(item.getId())))
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
     public List<OrganizationContentDto> getVisibleContentForCurrentUser(
             Integer organizationId,
             OrganizationContentType type,
@@ -53,8 +77,9 @@ public class OrganizationContentService {
                 .findByOrganizationIdAndTypeAndPublishedTrueOrderByCreatedAtDesc(organizationId, type);
 
         if (items.isEmpty() || currentUser == null || currentUser.getId() == null) {
+            Map<Long, ResponseSummary> summaries = buildResponseSummaries(items);
             return items.stream()
-                    .map(this::toDto)
+                    .map(item -> toDto(item, null, summaries.get(item.getId())))
                     .toList();
         }
 
@@ -67,11 +92,19 @@ public class OrganizationContentService {
                 .stream()
                 .collect(Collectors.toMap(
                         response -> response.getContentItem().getId(),
-                        Function.identity()
+                        Function.identity(),
+                        (left, right) -> {
+                            log.warn("Duplicate content responses detected for organizationId={}, contentId={}, userId={}. Keeping most recent row.",
+                                    organizationId,
+                                    left.getContentItem() != null ? left.getContentItem().getId() : null,
+                                    currentUser.getId());
+                            return isRightResponseNewer(left, right) ? right : left;
+                        }
                 ));
+        Map<Long, ResponseSummary> summaries = buildResponseSummaries(items);
 
         return items.stream()
-                .map(item -> toDto(item, responsesByContentId.get(item.getId())))
+                .map(item -> toDto(item, responsesByContentId.get(item.getId()), summaries.get(item.getId())))
                 .toList();
     }
 
@@ -99,7 +132,10 @@ public class OrganizationContentService {
                 .published(request.getPublished() == null ? true : request.getPublished())
                 .build();
 
-        return toDto(contentRepository.save(item));
+        OrganizationContentItem saved = contentRepository.save(item);
+        log.debug("Organization content persisted: organizationId={}, moduleCode={}, contentType={}, contentId={}, createdByUserId={}",
+                organizationId, type.getModuleCode(), type.name(), saved.getId(), createdBy != null ? createdBy.getId() : null);
+        return toDto(saved);
     }
 
     public OrganizationContentDto saveCurrentUserResponse(
@@ -140,7 +176,30 @@ public class OrganizationContentService {
 
         applyResponse(type, item, request, response);
 
-        return toDto(item, responseRepository.save(response));
+        responseRepository.save(response);
+        ResponseSummary summary = buildResponseSummary(contentId);
+        return toDto(item, response, summary);
+    }
+
+    public OrganizationContentDto updateContentPublicationStatus(
+            Integer organizationId,
+            OrganizationContentType type,
+            Long contentId,
+            Boolean published
+    ) {
+        if (published == null) {
+            throw new IllegalArgumentException("Published state is required");
+        }
+
+        requireModuleGranted(organizationId, type);
+        OrganizationContentItem item = contentRepository
+                .findByIdAndOrganizationIdAndType(contentId, organizationId, type)
+                .orElseThrow(() -> new IllegalArgumentException("Content not found for this organization"));
+
+        item.setPublished(published);
+        OrganizationContentItem updated = contentRepository.save(item);
+        ResponseSummary summary = buildResponseSummary(contentId);
+        return toDto(updated, null, summary);
     }
 
     private void requireModuleEnabled(Integer organizationId, OrganizationContentType type) {
@@ -154,11 +213,24 @@ public class OrganizationContentService {
         }
     }
 
-    private OrganizationContentDto toDto(OrganizationContentItem item) {
-        return toDto(item, null);
+    private void requireModuleGranted(Integer organizationId, OrganizationContentType type) {
+        OrganizationModule organizationModule = organizationModuleRepository
+                .findByOrganizationIdAndModuleCode(organizationId, type.getModuleCode())
+                .orElseThrow(() -> new AccessDeniedException("This module is not granted to the organization"));
+        if (!Boolean.TRUE.equals(organizationModule.getGrantedBySaas())) {
+            throw new AccessDeniedException("This module is not granted to the organization");
+        }
     }
 
-    private OrganizationContentDto toDto(OrganizationContentItem item, OrganizationContentResponse response) {
+    private OrganizationContentDto toDto(OrganizationContentItem item) {
+        return toDto(item, null, null);
+    }
+
+    private OrganizationContentDto toDto(
+            OrganizationContentItem item,
+            OrganizationContentResponse response,
+            ResponseSummary summary
+    ) {
         User createdBy = item.getCreatedBy();
         String createdByName = createdBy == null
                 ? null
@@ -181,6 +253,8 @@ public class OrganizationContentService {
                 .myAnswer(response != null ? response.getAnswer() : null)
                 .myParticipating(response != null ? response.getParticipating() : null)
                 .myReaction(response != null ? response.getReaction() : null)
+                .totalResponses(summary != null ? summary.totalResponses() : 0L)
+                .responseBreakdown(summary != null ? summary.breakdown() : Map.of())
                 .build();
     }
 
@@ -257,5 +331,153 @@ public class OrganizationContentService {
                 .map(String::trim)
                 .filter(option -> !option.isBlank())
                 .toList();
+    }
+
+    private Map<Long, ResponseSummary> buildResponseSummaries(List<OrganizationContentItem> items) {
+        if (items == null || items.isEmpty()) {
+            return Map.of();
+        }
+
+        List<Long> contentIds = items.stream()
+                .map(OrganizationContentItem::getId)
+                .toList();
+
+        Map<Long, List<OrganizationContentResponse>> responsesByContentId = responseRepository
+                .findByContentItemIdIn(contentIds)
+                .stream()
+                .collect(Collectors.groupingBy(response -> response.getContentItem().getId()));
+
+        Map<Long, ResponseSummary> summaries = new HashMap<>();
+        for (OrganizationContentItem item : items) {
+            List<OrganizationContentResponse> responses =
+                    responsesByContentId.getOrDefault(item.getId(), List.of());
+            summaries.put(item.getId(), summarizeResponses(item, responses));
+        }
+        return summaries;
+    }
+
+    private ResponseSummary buildResponseSummary(Long contentId) {
+        List<OrganizationContentResponse> responses = responseRepository.findByContentItemIdIn(List.of(contentId));
+        return summarizeResponsesForContentId(contentId, responses);
+    }
+
+    private ResponseSummary summarizeResponsesForContentId(
+            Long contentId,
+            List<OrganizationContentResponse> responses
+    ) {
+        if (responses == null || responses.isEmpty()) {
+            return new ResponseSummary(0L, Map.of());
+        }
+
+        OrganizationContentItem item = responses.get(0).getContentItem();
+        if (item == null || !contentId.equals(item.getId())) {
+            return new ResponseSummary(0L, Map.of());
+        }
+
+        return summarizeResponses(item, responses);
+    }
+
+    private ResponseSummary summarizeResponses(
+            OrganizationContentItem item,
+            List<OrganizationContentResponse> responses
+    ) {
+        if (responses == null || responses.isEmpty()) {
+            return new ResponseSummary(0L, Map.of());
+        }
+
+        Map<String, Long> breakdown = new LinkedHashMap<>();
+
+        OrganizationContentType safeType = resolveType(item, responses);
+        if (safeType == null) {
+            log.warn("Skipping response breakdown for contentId={} because content type is null or invalid. Falling back to empty breakdown.",
+                    item != null ? item.getId() : null);
+            return new ResponseSummary((long) responses.size(), Map.of());
+        }
+
+        switch (safeType) {
+            case VOTE -> {
+                List<String> options = toOptionsList(item.getOptionsText());
+                for (String option : options) {
+                    breakdown.put(option, 0L);
+                }
+
+                for (OrganizationContentResponse response : responses) {
+                    String answer = response.getAnswer();
+                    if (answer == null || answer.isBlank()) {
+                        continue;
+                    }
+
+                    String matchingKey = breakdown.keySet()
+                            .stream()
+                            .filter(option -> option.equalsIgnoreCase(answer.trim()))
+                            .findFirst()
+                            .orElse(answer.trim());
+
+                    breakdown.merge(matchingKey, 1L, Long::sum);
+                }
+            }
+            case CONCERTATION -> {
+                long participating = responses.stream()
+                        .filter(response -> Boolean.TRUE.equals(response.getParticipating()))
+                        .count();
+                long notParticipating = responses.size() - participating;
+                breakdown.put("participating", participating);
+                breakdown.put("notParticipating", Math.max(notParticipating, 0L));
+            }
+            case YOUTH_NEWS -> {
+                long reacted = responses.stream()
+                        .filter(response -> response.getReaction() != null && !response.getReaction().isBlank())
+                        .count();
+                long followed = responses.size() - reacted;
+                breakdown.put("reacted", reacted);
+                breakdown.put("follow", Math.max(followed, 0L));
+            }
+        }
+
+        return new ResponseSummary((long) responses.size(), breakdown);
+    }
+
+    private OrganizationContentType resolveType(
+            OrganizationContentItem item,
+            List<OrganizationContentResponse> responses
+    ) {
+        if (item != null && item.getType() != null) {
+            return item.getType();
+        }
+        if (responses == null || responses.isEmpty()) {
+            return null;
+        }
+        OrganizationContentResponse first = responses.get(0);
+        return first != null ? first.getType() : null;
+    }
+
+    private boolean isRightResponseNewer(OrganizationContentResponse left, OrganizationContentResponse right) {
+        if (left == null) {
+            return true;
+        }
+        if (right == null) {
+            return false;
+        }
+        if (left.getUpdatedAt() == null && right.getUpdatedAt() != null) {
+            return true;
+        }
+        if (left.getUpdatedAt() != null && right.getUpdatedAt() == null) {
+            return false;
+        }
+        if (left.getUpdatedAt() != null && right.getUpdatedAt() != null) {
+            return right.getUpdatedAt().isAfter(left.getUpdatedAt());
+        }
+        Long leftId = left.getId();
+        Long rightId = right.getId();
+        if (leftId == null) {
+            return true;
+        }
+        if (rightId == null) {
+            return false;
+        }
+        return rightId > leftId;
+    }
+
+    private record ResponseSummary(Long totalResponses, Map<String, Long> breakdown) {
     }
 }

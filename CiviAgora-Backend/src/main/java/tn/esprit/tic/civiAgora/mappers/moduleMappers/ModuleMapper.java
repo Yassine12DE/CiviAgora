@@ -15,6 +15,7 @@ public class ModuleMapper {
                 .code(module.getCode())
                 .name(module.getName())
                 .description(module.getDescription())
+                .scope(module.getScope() == null ? null : module.getScope().name())
                 .active(module.getActive())
                 .build();
     }

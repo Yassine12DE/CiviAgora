@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tn.esprit.tic.civiAgora.dao.entity.Module;
 import tn.esprit.tic.civiAgora.dao.entity.Organization;
 import tn.esprit.tic.civiAgora.dao.entity.OrganizationModule;
+import tn.esprit.tic.civiAgora.dao.entity.enums.ModuleScope;
 import tn.esprit.tic.civiAgora.dao.repository.OrganizationModuleRepository;
 import tn.esprit.tic.civiAgora.dao.repository.OrganizationRepository;
 import tn.esprit.tic.civiAgora.dto.moduleDto.OrganizationModuleDto;
@@ -24,6 +25,7 @@ public class OrganizationModuleService {
     private final ModuleService moduleService;
     private final OrganizationModuleMapper organizationModuleMapper;
     private final TenantAccessService tenantAccessService;
+    private final ModuleNotificationEmailService moduleNotificationEmailService;
 
     public List<OrganizationModuleDto> getAllModulesForOrganization(Integer organizationId) {
         getOrganizationOrThrow(organizationId);
@@ -34,12 +36,12 @@ public class OrganizationModuleService {
 
     public List<OrganizationModuleDto> getVisibleModulesForOrganization(Integer organizationId) {
         getOrganizationOrThrow(organizationId);
-        return mapOrganizationModules(
-                organizationModuleRepository
-                        .findByOrganizationIdAndGrantedBySaasTrueAndEnabledByOrganizationTrueOrderByDisplayOrderAsc(
-                                organizationId
-                        )
-        );
+        return mapOrganizationModules(organizationModuleRepository
+                .findByOrganizationIdAndGrantedBySaasTrueAndEnabledByOrganizationTrueOrderByDisplayOrderAsc(
+                        organizationId
+                ).stream()
+                .filter(this::isModuleFrontOfficeVisible)
+                .toList());
     }
 
     public List<OrganizationModuleDto> getVisibleModulesForCurrentOrganization() {
@@ -49,7 +51,12 @@ public class OrganizationModuleService {
 
     public List<OrganizationModuleDto> getTenantModules(Integer organizationId) {
         tenantAccessService.assertOrganizationAccessOrThrow(organizationId);
-        return getAllModulesForOrganization(organizationId);
+        return mapOrganizationModules(
+                organizationModuleRepository.findByOrganizationIdAndGrantedBySaasTrue(organizationId)
+                        .stream()
+                        .filter(this::isModuleBackOfficeVisible)
+                        .toList()
+        );
     }
 
     @Transactional
@@ -60,6 +67,7 @@ public class OrganizationModuleService {
     ) {
         Organization organization = getOrganizationOrThrow(organizationId);
         Module module = resolveModuleReference(moduleReference);
+        assertModuleActive(module);
 
         OrganizationModule existing = organizationModuleRepository
                 .findByOrganizationIdAndModuleId(organizationId, module.getId())
@@ -80,6 +88,11 @@ public class OrganizationModuleService {
         organizationModule.setEnabledByOrganization(true);
         applyDisplayOrder(organizationModule, organizationId, displayOrder);
         organizationModuleRepository.save(organizationModule);
+        moduleNotificationEmailService.sendModuleGrantedNotification(
+                organization,
+                module.getName(),
+                module.getCode()
+        );
 
         return getAllModulesForOrganization(organizationId);
     }
@@ -88,6 +101,7 @@ public class OrganizationModuleService {
     public OrganizationModuleDto grantModuleToOrganization(Integer organizationId, String moduleCode, Integer displayOrder) {
         Organization organization = getOrganizationOrThrow(organizationId);
         Module module = moduleService.getModuleByCode(moduleCode);
+        assertModuleActive(module);
 
         OrganizationModule organizationModule = organizationModuleRepository
                 .findByOrganizationIdAndModuleId(organizationId, module.getId())
@@ -99,8 +113,13 @@ public class OrganizationModuleService {
         organizationModule.setGrantedBySaas(true);
         organizationModule.setEnabledByOrganization(true);
         applyDisplayOrder(organizationModule, organizationId, displayOrder);
-
-        return organizationModuleMapper.toDto(organizationModuleRepository.save(organizationModule));
+        OrganizationModule saved = organizationModuleRepository.save(organizationModule);
+        moduleNotificationEmailService.sendModuleGrantedNotification(
+                organization,
+                module.getName(),
+                module.getCode()
+        );
+        return organizationModuleMapper.toDto(saved);
     }
 
     @Transactional
@@ -177,6 +196,7 @@ public class OrganizationModuleService {
 
     private List<OrganizationModuleDto> mapOrganizationModules(List<OrganizationModule> organizationModules) {
         return organizationModules.stream()
+                .filter(this::isModuleActive)
                 .sorted(
                         Comparator
                                 .comparing(
@@ -187,5 +207,31 @@ public class OrganizationModuleService {
                 )
                 .map(organizationModuleMapper::toDto)
                 .toList();
+    }
+
+    private boolean isModuleActive(OrganizationModule organizationModule) {
+        return organizationModule != null
+                && organizationModule.getModule() != null
+                && Boolean.TRUE.equals(organizationModule.getModule().getActive());
+    }
+
+    private boolean isModuleFrontOfficeVisible(OrganizationModule organizationModule) {
+        if (!isModuleActive(organizationModule)) {
+            return false;
+        }
+        return ModuleScope.resolveOrDefault(organizationModule.getModule().getScope()).allowsFrontOffice();
+    }
+
+    private boolean isModuleBackOfficeVisible(OrganizationModule organizationModule) {
+        if (!isModuleActive(organizationModule)) {
+            return false;
+        }
+        return ModuleScope.resolveOrDefault(organizationModule.getModule().getScope()).allowsBackOffice();
+    }
+
+    private void assertModuleActive(Module module) {
+        if (module == null || !Boolean.TRUE.equals(module.getActive())) {
+            throw new IllegalStateException("Module is inactive in the global catalog");
+        }
     }
 }

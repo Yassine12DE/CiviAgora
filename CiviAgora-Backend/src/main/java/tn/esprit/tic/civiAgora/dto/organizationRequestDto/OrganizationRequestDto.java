@@ -52,6 +52,7 @@ public class OrganizationRequestDto {
     private LocalDateTime declinedAt;
     private LocalDateTime paidAt;
     private LocalDateTime activatedAt;
+    private String stripeSessionId;
     private BigDecimal quoteBaseFee;
     private BigDecimal quoteUserFee;
     private BigDecimal quoteModuleFee;

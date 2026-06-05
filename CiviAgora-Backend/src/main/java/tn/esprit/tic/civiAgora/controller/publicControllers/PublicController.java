@@ -64,9 +64,8 @@ public class PublicController {
     @GetMapping("/modules")
     public ResponseEntity<List<ModuleDto>> getPublicModules() {
         return ResponseEntity.ok(
-                moduleService.getAllModules()
+                moduleService.getFrontOfficePublicModules()
                         .stream()
-                        .filter(module -> Boolean.TRUE.equals(module.getActive()))
                         .map(moduleMapper::toDto)
                         .toList()
         );

@@ -1,6 +1,7 @@
 package tn.esprit.tic.civiAgora.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,9 +15,11 @@ import tn.esprit.tic.civiAgora.dao.repository.ModuleRepository;
 import tn.esprit.tic.civiAgora.dao.repository.OrganizationRepository;
 import tn.esprit.tic.civiAgora.dao.repository.OrganizationRequestRepository;
 import tn.esprit.tic.civiAgora.dao.repository.UserRepository;
+import tn.esprit.tic.civiAgora.dto.organizationRequestDto.OrganizationRequestPaymentEventDto;
 import tn.esprit.tic.civiAgora.dto.organizationRequestDto.OrganizationAccessRequestCreateDto;
 import tn.esprit.tic.civiAgora.dto.organizationRequestDto.OrganizationRequestDto;
 import tn.esprit.tic.civiAgora.dto.organizationRequestDto.PaymentSummaryDto;
+import tn.esprit.tic.civiAgora.event.OrganizationRequestPaymentConfirmedEvent;
 import tn.esprit.tic.civiAgora.mappers.organizationRequestMappers.OrganizationRequestMapper;
 
 import java.nio.charset.StandardCharsets;
@@ -43,6 +46,7 @@ public class OrganizationRequestService {
     private final QuoteCalculationService quoteCalculationService;
     private final PaymentActivationService paymentActivationService;
     private final OrganizationOnboardingEmailService onboardingEmailService;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     private static final String EMAIL_DELIVERY_WARNING =
             "Email could not be sent through the configured SMTP sender. Check the backend mail configuration, then use resend.";
@@ -251,6 +255,11 @@ public class OrganizationRequestService {
 
     @Transactional
     public OrganizationRequestDto markPaymentCompleted(Integer id, String processedBy) {
+        return markPaymentCompleted(id, processedBy, null, null);
+    }
+
+    @Transactional
+    public OrganizationRequestDto markPaymentCompleted(Integer id, String processedBy, String paymentToken, String stripeSessionId) {
         OrganizationRequest request = getRequestOrThrow(id);
         if (request.getOrganizationCreatedId() == null
                 && request.getPaymentStatus() != PaymentStatus.AWAITING_PAYMENT
@@ -259,7 +268,8 @@ public class OrganizationRequestService {
         }
 
         boolean alreadyActivated = isAlreadyActivated(request);
-        OrganizationRequest saved = paymentActivationService.markPaymentCompleted(request, processedBy);
+        OrganizationRequest saved = paymentActivationService.markPaymentCompleted(request, processedBy, stripeSessionId);
+        publishPaymentConfirmedEvent(saved, paymentToken, stripeSessionId);
         boolean emailSent = alreadyActivated || sendWelcomeEmail(saved);
         return toDtoWithEmailWarning(saved, emailSent);
     }
@@ -268,7 +278,8 @@ public class OrganizationRequestService {
     public PaymentSummaryDto completePaymentByToken(String token) {
         OrganizationRequest request = getRequestByPaymentToken(token);
         boolean alreadyActivated = isAlreadyActivated(request);
-        OrganizationRequest saved = paymentActivationService.markPaymentCompleted(request, "payment-link");
+        OrganizationRequest saved = paymentActivationService.markPaymentCompleted(request, "payment-link", null);
+        publishPaymentConfirmedEvent(saved, token, null);
         boolean emailSent = alreadyActivated || sendWelcomeEmail(saved);
         return toPaymentSummary(saved, emailSent);
     }
@@ -418,6 +429,27 @@ public class OrganizationRequestService {
             dto.setEmailDeliveryWarning(EMAIL_DELIVERY_WARNING);
         }
         return dto;
+    }
+
+    private void publishPaymentConfirmedEvent(OrganizationRequest request, String paymentToken, String stripeSessionId) {
+        if (request == null || request.getPaidAt() == null || request.getPaymentStatus() != PaymentStatus.PAID) {
+            return;
+        }
+
+        OrganizationRequestPaymentEventDto payload = OrganizationRequestPaymentEventDto.builder()
+                .organizationRequestId(request.getId())
+                .organizationName(request.getOrganizationName())
+                .desiredSlug(request.getDesiredSlug())
+                .paymentToken(paymentToken)
+                .status(request.getRequestStatus())
+                .paymentStatus(request.getPaymentStatus())
+                .paidAt(request.getPaidAt())
+                .activatedAt(request.getActivatedAt())
+                .stripeSessionId(stripeSessionId != null && !stripeSessionId.isBlank() ? stripeSessionId : request.getStripeSessionId())
+                .updatedAt(request.getUpdatedAt())
+                .organizationCreatedId(request.getOrganizationCreatedId())
+                .build();
+        applicationEventPublisher.publishEvent(new OrganizationRequestPaymentConfirmedEvent(payload));
     }
 
     private void validateNewRequest(String desiredSlug, String contactEmail, String adminEmail, List<String> requestedModules) {

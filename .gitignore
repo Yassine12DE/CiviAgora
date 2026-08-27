@@ -1,0 +1,39 @@
+# Local secrets and environment overrides
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Maven and JVM build output
+**/target/
+**/surefire-reports/
+**/failsafe-reports/
+**/maven-status/
+*.class
+*.jar
+!**/.mvn/wrapper/maven-wrapper.jar
+*.war
+*.ear
+
+# Runtime-generated uploads
+**/uploads/
+**/upload/
+
+# IDE metadata
+.idea/
+**/.idea/
+.vscode/
+**/.vscode/
+*.iml
+*.ipr
+*.iws
+.classpath
+.project
+**/.settings/
+
+# Logs and operating-system files
+*.log
+.DS_Store
+Thumbs.db
+

@@ -19,6 +19,8 @@ import tn.esprit.tic.civiAgora.dao.entity.enums.OrganizationStatus;
 import tn.esprit.tic.civiAgora.dao.entity.enums.PaymentStatus;
 import tn.esprit.tic.civiAgora.dao.entity.enums.QuoteStatus;
 import tn.esprit.tic.civiAgora.dao.entity.enums.Role;
+import tn.esprit.tic.civiAgora.dao.entity.enums.SubscriptionBillingCycle;
+import tn.esprit.tic.civiAgora.dao.entity.enums.SubscriptionStatus;
 import tn.esprit.tic.civiAgora.dao.repository.ModuleRepository;
 import tn.esprit.tic.civiAgora.dao.repository.ModuleRequestRepository;
 import tn.esprit.tic.civiAgora.dao.repository.OrganizationModuleRepository;
@@ -90,12 +92,50 @@ public class DataInitializer {
             if (organization.getCreatedAt() == null) {
                 organization.setCreatedAt(LocalDateTime.now().minusDays(210L - i * 20L));
             }
+            applySubscriptionSeed(organization);
 
             Organization saved = organizationRepository.save(organization);
             map.put(saved.getSlug(), saved);
         }
 
         return map;
+    }
+
+    private void applySubscriptionSeed(Organization organization) {
+        if (organization == null) {
+            return;
+        }
+
+        organization.setSubscriptionPlanCode("STARTER");
+        organization.setSubscriptionBillingCycle(SubscriptionBillingCycle.YEARLY);
+        organization.setSubscriptionAutoRenew(Boolean.FALSE);
+        organization.setSubscriptionRenewalCount(organization.getSubscriptionRenewalCount() == null ? 0 : organization.getSubscriptionRenewalCount());
+
+        if (organization.getStatus() == OrganizationStatus.INACTIVE) {
+            organization.setSubscriptionStatus(SubscriptionStatus.EXPIRED);
+            organization.setSubscriptionStartAt(organization.getCreatedAt());
+            organization.setSubscriptionEndAt(LocalDateTime.now().minusDays(15));
+            organization.setSubscriptionLastRenewedAt(organization.getCreatedAt().plusMonths(11));
+            organization.setSubscriptionPendingSince(null);
+            return;
+        }
+
+        if (organization.getStatus() == OrganizationStatus.PENDING) {
+            organization.setSubscriptionStatus(SubscriptionStatus.PENDING_PAYMENT);
+            organization.setSubscriptionStartAt(organization.getCreatedAt());
+            organization.setSubscriptionEndAt(null);
+            organization.setSubscriptionLastRenewedAt(null);
+            organization.setSubscriptionPendingSince(LocalDateTime.now().minusDays(2));
+            return;
+        }
+
+        organization.setSubscriptionStatus(SubscriptionStatus.ACTIVE);
+        organization.setSubscriptionStartAt(organization.getCreatedAt());
+        organization.setSubscriptionEndAt(organization.getCreatedAt() != null
+                ? organization.getCreatedAt().plusYears(1)
+                : LocalDateTime.now().plusYears(1));
+        organization.setSubscriptionLastRenewedAt(organization.getCreatedAt());
+        organization.setSubscriptionPendingSince(null);
     }
 
     private void seedOrganizationSettings(

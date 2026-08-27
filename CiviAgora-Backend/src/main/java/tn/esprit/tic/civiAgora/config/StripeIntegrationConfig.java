@@ -56,6 +56,14 @@ public class StripeIntegrationConfig {
         return value;
     }
 
+    public String requirePublishableKey() {
+        String value = getPublishableKey();
+        if (value.isBlank()) {
+            throw new IllegalStateException("STRIPE_PUBLISHABLE_KEY is not configured");
+        }
+        return value;
+    }
+
     public String getSuccessUrl() {
         return normalize(successUrl);
     }

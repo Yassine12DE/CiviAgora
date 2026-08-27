@@ -18,6 +18,7 @@ public class OrganizationModuleMapper {
                 .moduleName(entity.getModule().getName())
                 .moduleDescription(entity.getModule().getDescription())
                 .moduleScope(entity.getModule().getScope() == null ? null : entity.getModule().getScope().name())
+                .billingType(entity.getModule().getBillingType() == null ? null : entity.getModule().getBillingType().name())
                 .grantedBySaas(entity.getGrantedBySaas())
                 .enabledByOrganization(entity.getEnabledByOrganization())
                 .displayOrder(entity.getDisplayOrder())

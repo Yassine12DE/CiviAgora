@@ -29,7 +29,8 @@ public class OrganizationContentController {
     @GetMapping
     public ResponseEntity<List<OrganizationContentDto>> listContent(
             @PathVariable("organizationId") Integer organizationId,
-            @PathVariable("type") String type
+            @PathVariable("type") String type,
+            @RequestParam(value = "management", defaultValue = "false") boolean management
     ) {
         log.debug("Content GET request: pathOrganizationId={}, moduleSlug={}, jwtOrganizationId={}, jwtOrganizationSlug={}, resolvedTenantSlug={}",
                 organizationId,
@@ -43,6 +44,10 @@ public class OrganizationContentController {
         rbacService.requireTenantContentAccess(organizationId);
         OrganizationContentType contentType = OrganizationContentType.fromPath(type);
         User actor = rbacService.getCurrentUserOrThrow();
+        if (management) {
+            rbacService.requireTenantContentCreationAccess(organizationId);
+            return ResponseEntity.ok(contentService.getContent(organizationId, contentType));
+        }
         return ResponseEntity.ok(contentService.getVisibleContentForCurrentUser(organizationId, contentType, actor));
     }
 

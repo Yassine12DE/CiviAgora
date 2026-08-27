@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import tn.esprit.tic.civiAgora.dao.entity.Organization;
 
 import java.util.Locale;
@@ -21,7 +23,39 @@ public class ModuleNotificationEmailService {
     @Value("${civox.tenant.base-url-template:http://{slug}.lvh.me:5173}")
     private String tenantBaseUrlTemplate;
 
-    public void sendModuleGrantedNotification(
+    public void sendModuleGrantedNotificationAfterCommit(
+            Organization organization,
+            String moduleName,
+            String moduleCode
+    ) {
+        dispatchAfterCommit(
+                "module granted",
+                organization,
+                moduleCode,
+                () -> sendModuleGrantedNotification(organization, moduleName, moduleCode)
+        );
+    }
+
+    public void sendModuleRequestRejectedNotificationAfterCommit(
+            Organization organization,
+            String moduleName,
+            String moduleCode,
+            String reviewerComment
+    ) {
+        dispatchAfterCommit(
+                "module request rejected",
+                organization,
+                moduleCode,
+                () -> sendModuleRequestRejectedNotification(
+                        organization,
+                        moduleName,
+                        moduleCode,
+                        reviewerComment
+                )
+        );
+    }
+
+    private void sendModuleGrantedNotification(
             Organization organization,
             String moduleName,
             String moduleCode
@@ -49,7 +83,7 @@ public class ModuleNotificationEmailService {
         send(organization, subject, body);
     }
 
-    public void sendModuleRequestRejectedNotification(
+    private void sendModuleRequestRejectedNotification(
             Organization organization,
             String moduleName,
             String moduleCode,
@@ -79,6 +113,40 @@ public class ModuleNotificationEmailService {
         send(organization, subject, body);
     }
 
+    private void dispatchAfterCommit(
+            String notificationType,
+            Organization organization,
+            String moduleCode,
+            Runnable notification
+    ) {
+        Runnable safeNotification = () -> {
+            try {
+                notification.run();
+            } catch (Exception exception) {
+                log.error(
+                        "Business operation succeeded, but '{}' notification failed for organization {} and module {}",
+                        notificationType,
+                        organization == null ? null : organization.getId(),
+                        moduleCode,
+                        exception
+                );
+            }
+        };
+
+        if (TransactionSynchronizationManager.isActualTransactionActive()
+                && TransactionSynchronizationManager.isSynchronizationActive()) {
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                @Override
+                public void afterCommit() {
+                    safeNotification.run();
+                }
+            });
+            return;
+        }
+
+        safeNotification.run();
+    }
+
     private void send(Organization organization, String subject, String htmlBody) {
         String recipient = organization == null ? null : organization.getEmail();
         if (recipient == null || recipient.isBlank()) {
@@ -88,13 +156,6 @@ public class ModuleNotificationEmailService {
         try {
             emailService.sendHtmlMessage(recipient, subject, htmlBody);
         } catch (Exception exception) {
-            log.error(
-                    "Failed to send module notification '{}' to organization '{}' ({})",
-                    subject,
-                    organization.getName(),
-                    recipient,
-                    exception
-            );
             throw new IllegalStateException(
                     "Module notification email could not be sent to " + recipient + ". Check SMTP configuration.",
                     exception

@@ -2,8 +2,10 @@ package tn.esprit.tic.civiAgora.dao.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import tn.esprit.tic.civiAgora.dao.entity.enums.ModuleBillingType;
 import tn.esprit.tic.civiAgora.dao.entity.enums.ModuleScope;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,9 +33,24 @@ public class Module {
     @Builder.Default
     private ModuleScope scope = ModuleScope.BOTH;
 
+    @Enumerated(EnumType.STRING)
+    @Column(length = 32)
+    @Builder.Default
+    private ModuleBillingType billingType = ModuleBillingType.ONE_TIME;
+
+    @Column(precision = 12, scale = 2)
+    private BigDecimal oneTimePrice;
+
+    @Column(precision = 12, scale = 2)
+    private BigDecimal monthlyPrice;
+
+    @Column(precision = 12, scale = 2)
+    private BigDecimal yearlyPrice;
+
     @Builder.Default
     private Boolean active = true;
 
     @OneToMany(mappedBy = "module", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<OrganizationModule> organizationModules = new ArrayList<>();
 }

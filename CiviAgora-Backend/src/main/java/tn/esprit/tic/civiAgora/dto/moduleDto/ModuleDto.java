@@ -2,6 +2,8 @@ package tn.esprit.tic.civiAgora.dto.moduleDto;
 
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -13,5 +15,9 @@ public class ModuleDto {
     private String name;
     private String description;
     private String scope;
+    private String billingType;
+    private BigDecimal oneTimePrice;
+    private BigDecimal monthlyPrice;
+    private BigDecimal yearlyPrice;
     private Boolean active;
 }

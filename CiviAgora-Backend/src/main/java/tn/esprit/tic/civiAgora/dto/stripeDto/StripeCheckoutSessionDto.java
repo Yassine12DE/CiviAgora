@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import tn.esprit.tic.civiAgora.dao.entity.enums.StripeCheckoutFlow;
 import tn.esprit.tic.civiAgora.dao.entity.enums.StripeCheckoutStatus;
+import tn.esprit.tic.civiAgora.dao.entity.enums.SubscriptionBillingCycle;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -24,6 +25,9 @@ public class StripeCheckoutSessionDto {
     private String organizationName;
     private String organizationSlug;
     private String planCode;
+    private String moduleCode;
+    private SubscriptionBillingCycle billingCycle;
+    private String subscriptionAction;
     private String moduleSummary;
     private StripeCheckoutStatus paymentStatus;
     private String currency;

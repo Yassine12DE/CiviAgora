@@ -143,6 +143,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         return path.equals("/auth/me")
                 || path.equals("/auth/refresh-token")
+                || path.startsWith("/api/chat")
                 || path.startsWith("/modules/")
                 || path.startsWith("/org/");
     }

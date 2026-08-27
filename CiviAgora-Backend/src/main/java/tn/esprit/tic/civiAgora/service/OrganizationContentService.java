@@ -11,6 +11,8 @@ import tn.esprit.tic.civiAgora.dao.entity.OrganizationContentResponse;
 import tn.esprit.tic.civiAgora.dao.entity.OrganizationModule;
 import tn.esprit.tic.civiAgora.dao.entity.User;
 import tn.esprit.tic.civiAgora.dao.entity.enums.OrganizationContentType;
+import tn.esprit.tic.civiAgora.dao.entity.enums.OrganizationContentResultVisibility;
+import tn.esprit.tic.civiAgora.dao.entity.enums.Role;
 import tn.esprit.tic.civiAgora.dao.repository.OrganizationContentItemRepository;
 import tn.esprit.tic.civiAgora.dao.repository.OrganizationContentResponseRepository;
 import tn.esprit.tic.civiAgora.dao.repository.OrganizationModuleRepository;
@@ -20,6 +22,7 @@ import tn.esprit.tic.civiAgora.dto.contentDto.OrganizationContentInteractionRequ
 import tn.esprit.tic.civiAgora.dto.contentDto.OrganizationContentRequest;
 
 import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -39,6 +42,7 @@ public class OrganizationContentService {
     private final OrganizationRepository organizationRepository;
     private final OrganizationModuleRepository organizationModuleRepository;
     private final TenantAccessService tenantAccessService;
+    private final OrganizationSubscriptionAccessPolicy subscriptionAccessPolicy;
 
     @Transactional(readOnly = true)
     public List<OrganizationContentDto> getContent(Integer organizationId, OrganizationContentType type) {
@@ -47,17 +51,19 @@ public class OrganizationContentService {
         Map<Long, ResponseSummary> summaries = buildResponseSummaries(items);
 
         return items.stream()
-                .map(item -> toDto(item, null, summaries.get(item.getId())))
+                .map(item -> toDto(item, null, summaries.get(item.getId()), true))
                 .toList();
     }
 
     @Transactional(readOnly = true)
     public List<OrganizationContentDto> getCurrentOrganizationPublicContent(OrganizationContentType type) {
-        Integer organizationId = tenantAccessService.getResolvedOrganizationOrThrow().getId();
-        requireModuleEnabled(organizationId, type);
+        Organization organization = tenantAccessService.getResolvedOrganizationOrThrow();
+        Integer organizationId = organization.getId();
+        requireModuleEnabled(organization, type);
 
         List<OrganizationContentItem> items = contentRepository
-                .findByOrganizationIdAndTypeAndPublishedTrueOrderByCreatedAtDesc(organizationId, type);
+                .findByOrganizationIdAndTypeAndPublishedTrueOrderByCreatedAtDesc(organizationId, type)
+                .stream().filter(this::isPubliclyVisible).toList();
         Map<Long, ResponseSummary> summaries = buildResponseSummaries(items);
 
         return items.stream()
@@ -74,7 +80,8 @@ public class OrganizationContentService {
         requireModuleEnabled(organizationId, type);
 
         List<OrganizationContentItem> items = contentRepository
-                .findByOrganizationIdAndTypeAndPublishedTrueOrderByCreatedAtDesc(organizationId, type);
+                .findByOrganizationIdAndTypeAndPublishedTrueOrderByCreatedAtDesc(organizationId, type)
+                .stream().filter(this::isPubliclyVisible).toList();
 
         if (items.isEmpty() || currentUser == null || currentUser.getId() == null) {
             Map<Long, ResponseSummary> summaries = buildResponseSummaries(items);
@@ -104,7 +111,7 @@ public class OrganizationContentService {
         Map<Long, ResponseSummary> summaries = buildResponseSummaries(items);
 
         return items.stream()
-                .map(item -> toDto(item, responsesByContentId.get(item.getId()), summaries.get(item.getId())))
+                .map(item -> toDto(item, responsesByContentId.get(item.getId()), summaries.get(item.getId()), isOperator(currentUser)))
                 .toList();
     }
 
@@ -117,10 +124,14 @@ public class OrganizationContentService {
         if (request.getTitle() == null || request.getTitle().isBlank()) {
             throw new IllegalArgumentException("Title is required");
         }
+        if (request.getOpeningAt() != null && request.getClosingAt() != null
+                && !request.getClosingAt().isAfter(request.getOpeningAt())) {
+            throw new IllegalArgumentException("Closing time must be after opening time");
+        }
 
         Organization organization = organizationRepository.findById(organizationId)
                 .orElseThrow(() -> new RuntimeException("Organization not found"));
-        requireModuleEnabled(organizationId, type);
+        requireModuleEnabled(organization, type);
 
         OrganizationContentItem item = OrganizationContentItem.builder()
                 .organization(organization)
@@ -130,6 +141,11 @@ public class OrganizationContentService {
                 .body(request.getBody())
                 .optionsText(toOptionsText(request.getOptions()))
                 .published(request.getPublished() == null ? true : request.getPublished())
+                .openingAt(request.getOpeningAt())
+                .closingAt(request.getClosingAt())
+                .resultVisibility(request.getResultVisibility() == null
+                        ? OrganizationContentResultVisibility.AFTER_RESPONSE : request.getResultVisibility())
+                .featured(Boolean.TRUE.equals(request.getFeatured()))
                 .build();
 
         OrganizationContentItem saved = contentRepository.save(item);
@@ -152,18 +168,16 @@ public class OrganizationContentService {
             throw new AccessDeniedException("Authenticated user required");
         }
 
-        requireModuleEnabled(organizationId, type);
+        Organization organization = getOrganizationOrThrow(organizationId);
+        requireModuleEnabled(organization, type);
 
         OrganizationContentItem item = contentRepository
                 .findByIdAndOrganizationIdAndType(contentId, organizationId, type)
                 .orElseThrow(() -> new IllegalArgumentException("Content not found for this organization"));
 
-        if (!Boolean.TRUE.equals(item.getPublished())) {
-            throw new AccessDeniedException("This content is not published");
+        if (!isAcceptingResponses(item)) {
+            throw new IllegalStateException("This content is not accepting responses");
         }
-
-        Organization organization = organizationRepository.findById(organizationId)
-                .orElseThrow(() -> new RuntimeException("Organization not found"));
 
         OrganizationContentResponse response = responseRepository
                 .findByOrganizationIdAndContentItemIdAndUserId(organizationId, contentId, currentUser.getId())
@@ -178,7 +192,7 @@ public class OrganizationContentService {
 
         responseRepository.save(response);
         ResponseSummary summary = buildResponseSummary(contentId);
-        return toDto(item, response, summary);
+        return toDto(item, response, summary, isOperator(currentUser));
     }
 
     public OrganizationContentDto updateContentPublicationStatus(
@@ -203,23 +217,49 @@ public class OrganizationContentService {
     }
 
     private void requireModuleEnabled(Integer organizationId, OrganizationContentType type) {
+        Organization organization = getOrganizationOrThrow(organizationId);
+        requireModuleEnabled(organization, type);
+    }
+
+    private void requireModuleEnabled(Organization organization, OrganizationContentType type) {
+        Integer organizationId = organization.getId();
+        if (!subscriptionAccessPolicy.hasActiveAccess(organization)) {
+            throw new AccessDeniedException("This organization subscription is inactive");
+        }
         OrganizationModule organizationModule = organizationModuleRepository
                 .findByOrganizationIdAndModuleCode(organizationId, type.getModuleCode())
                 .orElseThrow(() -> new AccessDeniedException("This module is not granted to the organization"));
 
-        if (!Boolean.TRUE.equals(organizationModule.getGrantedBySaas())
+        if (!isModuleActive(organizationModule)
+                || !Boolean.TRUE.equals(organizationModule.getGrantedBySaas())
                 || !Boolean.TRUE.equals(organizationModule.getEnabledByOrganization())) {
             throw new AccessDeniedException("This module is not enabled for the organization");
         }
     }
 
     private void requireModuleGranted(Integer organizationId, OrganizationContentType type) {
+        Organization organization = getOrganizationOrThrow(organizationId);
+        if (!subscriptionAccessPolicy.hasActiveAccess(organization)) {
+            throw new AccessDeniedException("This organization subscription is inactive");
+        }
         OrganizationModule organizationModule = organizationModuleRepository
                 .findByOrganizationIdAndModuleCode(organizationId, type.getModuleCode())
                 .orElseThrow(() -> new AccessDeniedException("This module is not granted to the organization"));
-        if (!Boolean.TRUE.equals(organizationModule.getGrantedBySaas())) {
+        if (!isModuleActive(organizationModule)
+                || !Boolean.TRUE.equals(organizationModule.getGrantedBySaas())) {
             throw new AccessDeniedException("This module is not granted to the organization");
         }
+    }
+
+    private Organization getOrganizationOrThrow(Integer organizationId) {
+        return organizationRepository.findById(organizationId)
+                .orElseThrow(() -> new RuntimeException("Organization not found"));
+    }
+
+    private boolean isModuleActive(OrganizationModule organizationModule) {
+        return organizationModule != null
+                && organizationModule.getModule() != null
+                && Boolean.TRUE.equals(organizationModule.getModule().getActive());
     }
 
     private OrganizationContentDto toDto(OrganizationContentItem item) {
@@ -230,6 +270,15 @@ public class OrganizationContentService {
             OrganizationContentItem item,
             OrganizationContentResponse response,
             ResponseSummary summary
+    ) {
+        return toDto(item, response, summary, false);
+    }
+
+    private OrganizationContentDto toDto(
+            OrganizationContentItem item,
+            OrganizationContentResponse response,
+            ResponseSummary summary,
+            boolean forceResults
     ) {
         User createdBy = item.getCreatedBy();
         String createdByName = createdBy == null
@@ -246,6 +295,14 @@ public class OrganizationContentService {
                 .body(item.getBody())
                 .options(toOptionsList(item.getOptionsText()))
                 .published(item.getPublished())
+                .lifecycle(lifecycle(item))
+                .openingAt(format(item.getOpeningAt()))
+                .closingAt(format(item.getClosingAt()))
+                .resultVisibility((item.getResultVisibility() == null
+                        ? OrganizationContentResultVisibility.AFTER_RESPONSE : item.getResultVisibility()).name())
+                .featured(Boolean.TRUE.equals(item.getFeatured()))
+                .acceptingResponses(isAcceptingResponses(item))
+                .resultsVisible(forceResults || canSeeResults(item, response))
                 .createdAt(item.getCreatedAt() != null ? item.getCreatedAt().format(DateTimeFormatter.ISO_DATE_TIME) : null)
                 .organizationId(item.getOrganization() != null ? item.getOrganization().getId() : null)
                 .createdByUserId(createdBy != null ? createdBy.getId() : null)
@@ -253,9 +310,48 @@ public class OrganizationContentService {
                 .myAnswer(response != null ? response.getAnswer() : null)
                 .myParticipating(response != null ? response.getParticipating() : null)
                 .myReaction(response != null ? response.getReaction() : null)
+                .myRespondedAt(response != null
+                        ? format(response.getUpdatedAt() != null ? response.getUpdatedAt() : response.getCreatedAt())
+                        : null)
                 .totalResponses(summary != null ? summary.totalResponses() : 0L)
-                .responseBreakdown(summary != null ? summary.breakdown() : Map.of())
+                .responseBreakdown(summary != null && (forceResults || canSeeResults(item, response)) ? summary.breakdown() : Map.of())
                 .build();
+    }
+
+    private boolean isPubliclyVisible(OrganizationContentItem item) {
+        return Boolean.TRUE.equals(item.getPublished())
+                && (item.getOpeningAt() == null || !LocalDateTime.now().isBefore(item.getOpeningAt()));
+    }
+
+    private boolean isAcceptingResponses(OrganizationContentItem item) {
+        return isPubliclyVisible(item)
+                && (item.getClosingAt() == null || LocalDateTime.now().isBefore(item.getClosingAt()));
+    }
+
+    private boolean canSeeResults(OrganizationContentItem item, OrganizationContentResponse response) {
+        OrganizationContentResultVisibility visibility = item.getResultVisibility() == null
+                ? OrganizationContentResultVisibility.AFTER_RESPONSE : item.getResultVisibility();
+        return switch (visibility) {
+            case AFTER_RESPONSE -> response != null;
+            case AFTER_CLOSE -> item.getClosingAt() != null && !LocalDateTime.now().isBefore(item.getClosingAt());
+            case PRIVATE -> false;
+        };
+    }
+
+    private String lifecycle(OrganizationContentItem item) {
+        if (!Boolean.TRUE.equals(item.getPublished())) return "DRAFT";
+        if (item.getOpeningAt() != null && LocalDateTime.now().isBefore(item.getOpeningAt())) return "SCHEDULED";
+        if (item.getClosingAt() != null && !LocalDateTime.now().isBefore(item.getClosingAt())) return "CLOSED";
+        return "OPEN";
+    }
+
+    private String format(LocalDateTime value) {
+        return value == null ? null : value.format(DateTimeFormatter.ISO_DATE_TIME);
+    }
+
+    private boolean isOperator(User user) {
+        return user != null && (user.getRole() == Role.SUPER_ADMIN || user.getRole() == Role.ADMIN
+                || user.getRole() == Role.MANAGER);
     }
 
     private void applyResponse(

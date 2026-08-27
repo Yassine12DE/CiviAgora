@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import tn.esprit.tic.civiAgora.dao.entity.enums.StripeCheckoutFlow;
+import tn.esprit.tic.civiAgora.dao.entity.enums.SubscriptionBillingCycle;
 
 @Data
 @Builder
@@ -26,6 +27,14 @@ public class StripeCheckoutSessionCreateRequestDto {
 
     @Size(max = 120, message = "Plan code must be 120 characters or less")
     private String planCode;
+
+    private SubscriptionBillingCycle billingCycle;
+
+    @Size(max = 120, message = "Module code must be 120 characters or less")
+    private String moduleCode;
+
+    @Size(max = 64, message = "Subscription action must be 64 characters or less")
+    private String subscriptionAction;
 
     @Size(max = 255, message = "Customer email must be 255 characters or less")
     private String customerEmail;

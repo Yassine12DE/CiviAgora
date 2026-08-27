@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import tn.esprit.tic.civiAgora.dao.entity.enums.OrganizationStatus;
+import tn.esprit.tic.civiAgora.dao.entity.enums.SubscriptionBillingCycle;
+import tn.esprit.tic.civiAgora.dao.entity.enums.SubscriptionStatus;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -43,6 +45,21 @@ public class Organization {
 
     private String description;
     private String OrganizationLogoUrl;
+
+    private String subscriptionPlanCode;
+
+    @Enumerated(EnumType.STRING)
+    private SubscriptionBillingCycle subscriptionBillingCycle;
+
+    @Enumerated(EnumType.STRING)
+    private SubscriptionStatus subscriptionStatus;
+
+    private LocalDateTime subscriptionStartAt;
+    private LocalDateTime subscriptionEndAt;
+    private LocalDateTime subscriptionLastRenewedAt;
+    private LocalDateTime subscriptionPendingSince;
+    private Boolean subscriptionAutoRenew;
+    private Integer subscriptionRenewalCount;
 
 
     @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, orphanRemoval = true)

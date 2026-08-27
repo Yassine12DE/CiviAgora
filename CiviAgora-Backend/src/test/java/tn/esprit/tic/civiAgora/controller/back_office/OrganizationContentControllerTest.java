@@ -13,6 +13,7 @@ import tn.esprit.tic.civiAgora.service.TenantAccessService;
 
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -20,10 +21,11 @@ class OrganizationContentControllerTest {
 
     private MockMvc mockMvc;
     private RbacService rbacService;
+    private OrganizationContentService contentService;
 
     @BeforeEach
     void setUp() {
-        OrganizationContentService contentService = mock(OrganizationContentService.class);
+        contentService = mock(OrganizationContentService.class);
         rbacService = mock(RbacService.class);
         TenantAccessService tenantAccessService = mock(TenantAccessService.class);
 
@@ -53,5 +55,7 @@ class OrganizationContentControllerTest {
 
         mockMvc.perform(get("/org/5/content/concertation"))
                 .andExpect(status().isForbidden());
+
+        verifyNoInteractions(contentService);
     }
 }

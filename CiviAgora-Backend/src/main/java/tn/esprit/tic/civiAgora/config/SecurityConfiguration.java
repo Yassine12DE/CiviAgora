@@ -40,7 +40,8 @@ public class SecurityConfiguration {
                                 "/auth/forgot-password/**",
                                 "/auth/reset-password",
                                 "/public/**",
-                                "/error"
+                                "/error",
+                                "/api/chat/**"
                         ).permitAll()
                         .requestMatchers("/saas/**").hasAuthority("SUPER_ADMIN")
                         .requestMatchers("/org/**").authenticated()

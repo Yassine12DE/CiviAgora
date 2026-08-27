@@ -29,6 +29,15 @@ public class OrganizationMapper {
                 .phone(organization.getPhone())
                 .address(organization.getAddress())
                 .description(organization.getDescription())
+                .subscriptionPlanCode(organization.getSubscriptionPlanCode())
+                .subscriptionBillingCycle(organization.getSubscriptionBillingCycle())
+                .subscriptionStatus(organization.getSubscriptionStatus())
+                .subscriptionStartAt(organization.getSubscriptionStartAt())
+                .subscriptionEndAt(organization.getSubscriptionEndAt())
+                .subscriptionLastRenewedAt(organization.getSubscriptionLastRenewedAt())
+                .subscriptionPendingSince(organization.getSubscriptionPendingSince())
+                .subscriptionAutoRenew(organization.getSubscriptionAutoRenew())
+                .subscriptionRenewalCount(organization.getSubscriptionRenewalCount())
                 .build();
     }
 }

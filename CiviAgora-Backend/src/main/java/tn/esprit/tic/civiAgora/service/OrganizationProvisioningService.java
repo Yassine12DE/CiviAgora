@@ -8,6 +8,8 @@ import tn.esprit.tic.civiAgora.dao.entity.Organization;
 import tn.esprit.tic.civiAgora.dao.entity.OrganizationModule;
 import tn.esprit.tic.civiAgora.dao.entity.OrganizationRequest;
 import tn.esprit.tic.civiAgora.dao.entity.enums.OrganizationStatus;
+import tn.esprit.tic.civiAgora.dao.entity.enums.SubscriptionBillingCycle;
+import tn.esprit.tic.civiAgora.dao.entity.enums.SubscriptionStatus;
 import tn.esprit.tic.civiAgora.dao.repository.ModuleRepository;
 import tn.esprit.tic.civiAgora.dao.repository.OrganizationModuleRepository;
 import tn.esprit.tic.civiAgora.dao.repository.OrganizationRepository;
@@ -52,6 +54,14 @@ public class OrganizationProvisioningService {
         organization.setAddress(request.getAddress());
         organization.setDescription(request.getDescription());
         organization.setOrganizationLogoUrl(request.getLogoUrl());
+        organization.setSubscriptionPlanCode("STARTER");
+        organization.setSubscriptionBillingCycle(SubscriptionBillingCycle.YEARLY);
+        organization.setSubscriptionStatus(SubscriptionStatus.ACTIVE);
+        organization.setSubscriptionStartAt(LocalDateTime.now());
+        organization.setSubscriptionEndAt(LocalDateTime.now().plusYears(1));
+        organization.setSubscriptionLastRenewedAt(LocalDateTime.now());
+        organization.setSubscriptionAutoRenew(Boolean.FALSE);
+        organization.setSubscriptionRenewalCount(0);
 
         Organization createdOrganization = organizationRepository.save(organization);
         organizationSettingsService.createDefaultSettingsForOrganization(

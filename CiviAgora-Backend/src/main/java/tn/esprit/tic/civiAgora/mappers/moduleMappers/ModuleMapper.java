@@ -16,6 +16,10 @@ public class ModuleMapper {
                 .name(module.getName())
                 .description(module.getDescription())
                 .scope(module.getScope() == null ? null : module.getScope().name())
+                .billingType(module.getBillingType() == null ? null : module.getBillingType().name())
+                .oneTimePrice(module.getOneTimePrice())
+                .monthlyPrice(module.getMonthlyPrice())
+                .yearlyPrice(module.getYearlyPrice())
                 .active(module.getActive())
                 .build();
     }

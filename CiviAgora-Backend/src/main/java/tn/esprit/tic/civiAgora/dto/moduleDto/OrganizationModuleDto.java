@@ -15,6 +15,7 @@ public class OrganizationModuleDto {
     private String moduleName;
     private String moduleDescription;
     private String moduleScope;
+    private String billingType;
     private Boolean grantedBySaas;
     private Boolean enabledByOrganization;
     private Integer displayOrder;

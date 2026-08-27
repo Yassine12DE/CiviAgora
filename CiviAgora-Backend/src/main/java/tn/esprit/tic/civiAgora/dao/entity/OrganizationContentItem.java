@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import tn.esprit.tic.civiAgora.dao.entity.enums.OrganizationContentType;
+import tn.esprit.tic.civiAgora.dao.entity.enums.OrganizationContentResultVisibility;
 
 import java.time.LocalDateTime;
 
@@ -40,6 +41,14 @@ public class OrganizationContentItem {
 
     private Boolean published;
 
+    private LocalDateTime openingAt;
+    private LocalDateTime closingAt;
+
+    @Enumerated(EnumType.STRING)
+    private OrganizationContentResultVisibility resultVisibility;
+
+    private Boolean featured;
+
     private LocalDateTime createdAt;
 
     @PrePersist
@@ -49,6 +58,12 @@ public class OrganizationContentItem {
         }
         if (published == null) {
             published = true;
+        }
+        if (resultVisibility == null) {
+            resultVisibility = OrganizationContentResultVisibility.AFTER_RESPONSE;
+        }
+        if (featured == null) {
+            featured = false;
         }
     }
 }

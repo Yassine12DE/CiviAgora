@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 import tn.esprit.tic.civiAgora.dao.entity.enums.StripeCheckoutStatus;
 import tn.esprit.tic.civiAgora.dto.stripeDto.StripeCheckoutSessionCreateRequestDto;
 import tn.esprit.tic.civiAgora.dto.stripeDto.StripeCheckoutSessionDto;
+import tn.esprit.tic.civiAgora.dto.stripeDto.StripePaymentIntentDto;
 import tn.esprit.tic.civiAgora.service.StripeCheckoutService;
+import tn.esprit.tic.civiAgora.service.StripePaymentIntentService;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -24,9 +26,14 @@ import java.util.Map;
 public class StripeCheckoutController {
 
     private final StripeCheckoutService stripeCheckoutService;
+    private final StripePaymentIntentService stripePaymentIntentService;
 
-    public StripeCheckoutController(StripeCheckoutService stripeCheckoutService) {
+    public StripeCheckoutController(
+            StripeCheckoutService stripeCheckoutService,
+            StripePaymentIntentService stripePaymentIntentService
+    ) {
         this.stripeCheckoutService = stripeCheckoutService;
+        this.stripePaymentIntentService = stripePaymentIntentService;
     }
 
     @PostMapping("/checkout-sessions")
@@ -34,6 +41,20 @@ public class StripeCheckoutController {
             @Valid @RequestBody StripeCheckoutSessionCreateRequestDto request
     ) {
         return ResponseEntity.ok(stripeCheckoutService.createCheckoutSession(request));
+    }
+
+    @PostMapping("/payment-intents")
+    public ResponseEntity<StripePaymentIntentDto> createPaymentIntent(
+            @Valid @RequestBody StripeCheckoutSessionCreateRequestDto request
+    ) {
+        return ResponseEntity.ok(stripePaymentIntentService.createPaymentIntent(request));
+    }
+
+    @PostMapping("/payment-intents/{paymentIntentId}/sync")
+    public ResponseEntity<StripePaymentIntentDto> syncPaymentIntent(
+            @PathVariable("paymentIntentId") String paymentIntentId
+    ) {
+        return ResponseEntity.ok(stripePaymentIntentService.syncPaymentIntent(paymentIntentId));
     }
 
     @GetMapping("/checkout-sessions/{sessionId}")

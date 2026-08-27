@@ -11,6 +11,8 @@ import tn.esprit.tic.civiAgora.dao.entity.OrganizationContentItem;
 import tn.esprit.tic.civiAgora.dao.entity.OrganizationContentResponse;
 import tn.esprit.tic.civiAgora.dao.entity.OrganizationModule;
 import tn.esprit.tic.civiAgora.dao.entity.User;
+import tn.esprit.tic.civiAgora.dao.entity.Survey;
+import tn.esprit.tic.civiAgora.dao.entity.SurveySubmission;
 import tn.esprit.tic.civiAgora.dao.entity.enums.ModuleRequestStatus;
 import tn.esprit.tic.civiAgora.dao.entity.enums.ModuleScope;
 import tn.esprit.tic.civiAgora.dao.entity.enums.OrganizationContentType;
@@ -19,6 +21,8 @@ import tn.esprit.tic.civiAgora.dao.repository.OrganizationContentItemRepository;
 import tn.esprit.tic.civiAgora.dao.repository.OrganizationContentResponseRepository;
 import tn.esprit.tic.civiAgora.dao.repository.OrganizationModuleRepository;
 import tn.esprit.tic.civiAgora.dao.repository.UserRepository;
+import tn.esprit.tic.civiAgora.dao.repository.SurveyRepository;
+import tn.esprit.tic.civiAgora.dao.repository.SurveySubmissionRepository;
 import tn.esprit.tic.civiAgora.dto.analyticsDto.AnalyticsDashboardDto;
 import tn.esprit.tic.civiAgora.dto.analyticsDto.ChartSeriesDto;
 import tn.esprit.tic.civiAgora.dto.analyticsDto.KpiCardDto;
@@ -55,6 +59,9 @@ public class OrganizationAnalyticsService {
     private final OrganizationContentItemRepository contentItemRepository;
     private final OrganizationContentResponseRepository contentResponseRepository;
     private final ModuleRequestRepository moduleRequestRepository;
+    private final OrganizationBillingService organizationBillingService;
+    private final SurveyRepository surveyRepository;
+    private final SurveySubmissionRepository surveySubmissionRepository;
 
     @Transactional(readOnly = true)
     public AnalyticsDashboardDto getDashboard(Integer organizationId) {
@@ -85,6 +92,8 @@ public class OrganizationAnalyticsService {
         );
         List<OrganizationContentResponse> responses = safeList(contentResponseRepository.findByOrganizationId(organizationId));
         List<ModuleRequest> moduleRequests = safeList(moduleRequestRepository.findByOrganizationId(organizationId));
+        List<Survey> surveys = safeList(surveyRepository.findByOrganizationId(organizationId));
+        List<SurveySubmission> surveySubmissions = safeList(surveySubmissionRepository.findByOrganizationId(organizationId));
         List<OrganizationModule> enabledModules = safeList(
                 organizationModuleRepository
                         .findByOrganizationIdAndGrantedBySaasTrueAndEnabledByOrganizationTrueOrderByDisplayOrderAsc(
@@ -118,12 +127,14 @@ public class OrganizationAnalyticsService {
         long totalNews = contentCountByType.getOrDefault(OrganizationContentType.YOUTH_NEWS, 0L);
         long totalEvents = 0L;
         long totalRequests = moduleRequests.size();
-        long totalInteractions = responses.size();
+        long totalSurveyResponses = surveySubmissions.size();
+        long totalInteractions = responses.size() + totalSurveyResponses;
         long pendingModerationItems = moduleRequests.stream()
                 .filter(request -> request.getStatus() == ModuleRequestStatus.PENDING)
                 .count();
-        long uniqueParticipants = responses.stream()
-                .map(response -> response.getUser() != null ? response.getUser().getId() : null)
+        long uniqueParticipants = java.util.stream.Stream.concat(
+                        responses.stream().map(response -> response.getUser() != null ? response.getUser().getId() : null),
+                        surveySubmissions.stream().map(submission -> submission.getUser() != null ? submission.getUser().getId() : null))
                 .filter(Objects::nonNull)
                 .distinct()
                 .count();
@@ -137,13 +148,16 @@ public class OrganizationAnalyticsService {
                 ? (voteConsultationInteractions * 100.0) / voteConsultationSlots
                 : 0.0;
 
-        long recentActivityCount = countRecentActivity(users, contentItems, responses, moduleRequests, thirtyDaysAgo);
+        long recentActivityCount = countRecentActivity(users, contentItems, responses, moduleRequests, thirtyDaysAgo)
+                + surveySubmissions.stream().filter(item -> item.getSubmittedAt() != null && !item.getSubmittedAt().isBefore(thirtyDaysAgo)).count();
 
         List<ModuleActivityDto> moduleActivity = buildModuleActivity(
                 enabledModules,
                 contentCountByType,
                 responseCountByType,
-                activeUsers
+                activeUsers,
+                surveys.size(),
+                totalSurveyResponses
         );
 
         List<KpiCardDto> kpis = buildKpis(
@@ -158,6 +172,8 @@ public class OrganizationAnalyticsService {
                 participationRate,
                 engagementRate,
                 totalInteractions,
+                surveys.size(),
+                totalSurveyResponses,
                 pendingModerationItems,
                 recentActivityCount
         );
@@ -169,10 +185,11 @@ public class OrganizationAnalyticsService {
                 moduleRequests,
                 moduleActivity,
                 activeUsers,
-                recentMonths
+                recentMonths,
+                surveySubmissions
         );
 
-        List<RecentActivityDto> recentActivities = buildRecentActivities(users, contentItems, responses, moduleRequests);
+        List<RecentActivityDto> recentActivities = buildRecentActivities(users, contentItems, responses, moduleRequests, surveySubmissions);
         List<String> insights = buildInsights(moduleActivity, participationRate, pendingModerationItems, newUsersThisMonth, charts);
 
         log.info(
@@ -210,6 +227,9 @@ public class OrganizationAnalyticsService {
         if (module.isEmpty()) {
             return false;
         }
+        if (!organizationBillingService.isSubscriptionActive(organizationId)) {
+            return false;
+        }
         OrganizationModule organizationModule = module.get();
         return Boolean.TRUE.equals(organizationModule.getGrantedBySaas())
                 && Boolean.TRUE.equals(organizationModule.getEnabledByOrganization())
@@ -229,22 +249,26 @@ public class OrganizationAnalyticsService {
             double participationRate,
             double engagementRate,
             long totalInteractions,
+            long totalSurveys,
+            long totalSurveyResponses,
             long pendingModerationItems,
             long recentActivityCount
     ) {
         return List.of(
                 kpi("total_users", "Total citizens/users", totalUsers, "neutral", null),
-                kpi("active_users", "Active users", activeUsers, "success", null),
+                kpi("active_users", "Enabled member accounts", activeUsers, "success", null),
                 kpi("new_users_month", "New users this month", newUsersThisMonth, "success", "up"),
                 kpi("consultations", "Total consultations", totalConsultations, "primary", null),
-                kpi("votes", "Total votes/polls", totalVotes, "primary", null),
-                kpi("requests", "Total petitions/requests", totalRequests, "warning", null),
-                kpi("news", "Total news/articles", totalNews, "neutral", null),
+                kpi("votes", "Vote/poll items", totalVotes, "primary", null),
+                kpi("requests", "Module access requests", totalRequests, "warning", null),
+                kpi("news", "Youth news items", totalNews, "neutral", null),
                 kpi("events", "Total events", totalEvents, "neutral", null),
                 percentageKpi("participation_rate", "Participation rate", participationRate, "success"),
                 percentageKpi("engagement_rate", "Vote/consultation engagement", engagementRate, "primary"),
-                kpi("interactions", "Comments/interactions", totalInteractions, "primary", null),
-                kpi("pending_moderation", "Pending moderation items", pendingModerationItems, "danger", null),
+                kpi("interactions", "Recorded content responses", totalInteractions, "primary", null),
+                kpi("surveys", "Surveys", totalSurveys, "neutral", null),
+                kpi("survey_responses", "Survey responses", totalSurveyResponses, "primary", null),
+                kpi("pending_moderation", "Pending module requests", pendingModerationItems, "danger", null),
                 kpi("recent_activity", "Recent activity (30 days)", recentActivityCount, "neutral", null)
         );
     }
@@ -256,7 +280,8 @@ public class OrganizationAnalyticsService {
             List<ModuleRequest> moduleRequests,
             List<ModuleActivityDto> moduleActivity,
             long activeUsers,
-            List<YearMonth> recentMonths
+            List<YearMonth> recentMonths,
+            List<SurveySubmission> surveySubmissions
     ) {
         Map<YearMonth, Long> usersByMonth = aggregateUsersByMonth(users);
         Map<YearMonth, Long> activeUsersByMonth = aggregateActiveUsersByMonth(users);
@@ -278,7 +303,9 @@ public class OrganizationAnalyticsService {
                         && !response.getReaction().isBlank()
         );
         Map<YearMonth, Long> requestsByMonth = aggregateRequestsByMonth(moduleRequests);
-        Map<YearMonth, Long> commentsByMonth = aggregateRequestCommentsByMonth(moduleRequests);
+        Map<YearMonth, Long> surveysByMonth = surveySubmissions.stream()
+                .filter(item -> item.getSubmittedAt() != null)
+                .collect(Collectors.groupingBy(item -> YearMonth.from(item.getSubmittedAt()), Collectors.counting()));
 
         List<Map<String, Object>> userGrowthPoints = new ArrayList<>();
         long cumulativeUsers = 0L;
@@ -310,12 +337,14 @@ public class OrganizationAnalyticsService {
                     long consultationParticipation = consultationParticipationByMonth.getOrDefault(month, 0L);
                     long reactions = reactionsByMonth.getOrDefault(month, 0L);
                     long requestSubmissions = requestsByMonth.getOrDefault(month, 0L);
-                    long comments = commentsByMonth.getOrDefault(month, 0L);
+                    long comments = 0L;
+                    long surveyResponses = surveysByMonth.getOrDefault(month, 0L);
                     long totalEngagement = voteInteractions
                             + consultationParticipation
                             + reactions
                             + requestSubmissions
-                            + comments;
+                            + comments
+                            + surveyResponses;
                     long totalInteractions = interactionsByMonth.getOrDefault(month, 0L);
                     double monthParticipationRate = percentage(totalEngagement, activeUsers);
                     return chartPoint(monthLabel(month), totalEngagement, Map.of(
@@ -324,6 +353,7 @@ public class OrganizationAnalyticsService {
                             "comments", comments,
                             "reactions", reactions,
                             "requests", requestSubmissions,
+                            "surveys", surveyResponses,
                             "interactions", totalInteractions,
                             "participationRate", round(monthParticipationRate)
                     ));
@@ -353,6 +383,9 @@ public class OrganizationAnalyticsService {
                 )),
                 chartPoint("News reactions", interactionsByType.getOrDefault(OrganizationContentType.YOUTH_NEWS, 0L), Map.of(
                         "progress", round(percentage(interactionsByType.getOrDefault(OrganizationContentType.YOUTH_NEWS, 0L), activeUsers))
+                )),
+                chartPoint("Surveys", surveySubmissions.size(), Map.of(
+                        "progress", round(percentage(surveySubmissions.size(), activeUsers))
                 ))
         );
 
@@ -397,7 +430,7 @@ public class OrganizationAnalyticsService {
                 chart(
                         "engagement-evolution",
                         "Engagement evolution",
-                        "Votes, consultation participation, comments, reactions, and requests over time.",
+                        "Votes, consultation participation, reactions, and module requests over time.",
                         "area-smooth",
                         "Month",
                         "Engagement actions",
@@ -425,7 +458,9 @@ public class OrganizationAnalyticsService {
             List<OrganizationModule> enabledModules,
             Map<OrganizationContentType, Long> contentCountByType,
             Map<OrganizationContentType, Long> responseCountByType,
-            long activeUsers
+            long activeUsers,
+            long surveyCount,
+            long surveyResponseCount
     ) {
         if (enabledModules == null || enabledModules.isEmpty()) {
             return List.of();
@@ -437,6 +472,10 @@ public class OrganizationAnalyticsService {
                     OrganizationContentType contentType = moduleCodeToContentType(moduleCode);
                     long contentCount = contentType == null ? 0L : contentCountByType.getOrDefault(contentType, 0L);
                     long interactionCount = contentType == null ? 0L : responseCountByType.getOrDefault(contentType, 0L);
+                    if ("SURVEYS".equalsIgnoreCase(moduleCode)) {
+                        contentCount = surveyCount;
+                        interactionCount = surveyResponseCount;
+                    }
                     double rate = percentage(interactionCount, activeUsers);
                     return ModuleActivityDto.builder()
                             .moduleCode(moduleCode)
@@ -454,7 +493,8 @@ public class OrganizationAnalyticsService {
             List<User> users,
             List<OrganizationContentItem> contentItems,
             List<OrganizationContentResponse> responses,
-            List<ModuleRequest> moduleRequests
+            List<ModuleRequest> moduleRequests,
+            List<SurveySubmission> surveySubmissions
     ) {
         List<TimedActivity> activities = new ArrayList<>();
 
@@ -511,6 +551,20 @@ public class OrganizationAnalyticsService {
                                         : "Module")
                                 .createdAt(request.getRequestDate().format(ACTIVITY_DATE_FORMATTER))
                                 .tone(request.getStatus() == ModuleRequestStatus.PENDING ? "warning" : "info")
+                                .build()
+                )));
+
+        surveySubmissions.stream()
+                .filter(submission -> submission.getSubmittedAt() != null)
+                .forEach(submission -> activities.add(new TimedActivity(
+                        submission.getSubmittedAt(),
+                        RecentActivityDto.builder()
+                                .type("SURVEY_RESPONSE")
+                                .title("Survey response")
+                                .description(submission.getSurvey() != null
+                                        ? safeText(submission.getSurvey().getTitle(), "Survey") : "Survey")
+                                .createdAt(submission.getSubmittedAt().format(ACTIVITY_DATE_FORMATTER))
+                                .tone("primary")
                                 .build()
                 )));
 

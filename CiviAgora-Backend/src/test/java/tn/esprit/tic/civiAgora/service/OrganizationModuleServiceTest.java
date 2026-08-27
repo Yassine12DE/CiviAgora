@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import tn.esprit.tic.civiAgora.dao.entity.Module;
 import tn.esprit.tic.civiAgora.dao.entity.Organization;
 import tn.esprit.tic.civiAgora.dao.entity.OrganizationModule;
+import tn.esprit.tic.civiAgora.dao.entity.enums.OrganizationStatus;
 import tn.esprit.tic.civiAgora.dao.repository.OrganizationModuleRepository;
 import tn.esprit.tic.civiAgora.dao.repository.OrganizationRepository;
 import tn.esprit.tic.civiAgora.dto.moduleDto.OrganizationModuleDto;
@@ -19,9 +20,13 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -55,7 +60,8 @@ class OrganizationModuleServiceTest {
                 moduleService,
                 new OrganizationModuleMapper(),
                 tenantAccessService,
-                moduleNotificationEmailService
+                moduleNotificationEmailService,
+                new OrganizationSubscriptionAccessPolicy()
         );
     }
 
@@ -89,6 +95,54 @@ class OrganizationModuleServiceTest {
         assertEquals(1, result.size());
         assertEquals("VOTE", result.get(0).getModuleCode());
         assertEquals("Voting", result.get(0).getModuleName());
+        verify(moduleNotificationEmailService).sendModuleGrantedNotificationAfterCommit(
+                organization,
+                module.getName(),
+                module.getCode()
+        );
+    }
+
+    @Test
+    void addModuleToOrganizationPersistsGrantWhenNotificationFails() throws Exception {
+        Organization organization = organization(7);
+        Module module = module(3L, "VOTE", "Voting");
+        OrganizationModule granted = grantedModule(organization, module, 1);
+        EmailService emailService = mock(EmailService.class);
+        ModuleNotificationEmailService resilientNotificationService =
+                new ModuleNotificationEmailService(emailService);
+        OrganizationModuleService service = new OrganizationModuleService(
+                organizationModuleRepository,
+                organizationRepository,
+                moduleService,
+                new OrganizationModuleMapper(),
+                tenantAccessService,
+                resilientNotificationService,
+                new OrganizationSubscriptionAccessPolicy()
+        );
+
+        when(organizationRepository.findById(organization.getId())).thenReturn(Optional.of(organization));
+        when(moduleService.getModuleById(module.getId())).thenReturn(module);
+        when(organizationModuleRepository.findByOrganizationIdAndModuleId(organization.getId(), module.getId()))
+                .thenReturn(Optional.empty());
+        when(organizationModuleRepository.findByOrganizationIdAndGrantedBySaasTrue(organization.getId()))
+                .thenReturn(List.of(), List.of(granted));
+        when(organizationModuleRepository.save(any(OrganizationModule.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+        doThrow(new IllegalStateException("SMTP unavailable"))
+                .when(emailService).sendHtmlMessage(anyString(), anyString(), anyString());
+
+        List<OrganizationModuleDto> result = assertDoesNotThrow(
+                () -> service.addModuleToOrganization(
+                        organization.getId(),
+                        String.valueOf(module.getId()),
+                        null
+                )
+        );
+
+        verify(organizationModuleRepository).save(any(OrganizationModule.class));
+        verify(emailService).sendHtmlMessage(anyString(), anyString(), anyString());
+        assertEquals(1, result.size());
+        assertEquals("VOTE", result.get(0).getModuleCode());
     }
 
     @Test
@@ -189,11 +243,56 @@ class OrganizationModuleServiceTest {
         verify(organizationModuleRepository, never()).delete(any(OrganizationModule.class));
     }
 
+    @Test
+    void getTenantModulesReturnsGrantForLegacyActiveOrganization() {
+        Organization organization = organization(7);
+        organization.setStatus(OrganizationStatus.ACTIVE);
+        Module module = module(3L, "VOTE", "Voting");
+        OrganizationModule grant = grantedModule(organization, module, 1);
+
+        when(organizationRepository.findById(organization.getId())).thenReturn(Optional.of(organization));
+        when(organizationModuleRepository.findByOrganizationIdAndGrantedBySaasTrue(organization.getId()))
+                .thenReturn(List.of(grant));
+
+        List<OrganizationModuleDto> result = organizationModuleService.getTenantModules(organization.getId());
+
+        assertEquals(1, result.size());
+        assertEquals("VOTE", result.get(0).getModuleCode());
+    }
+
+    @Test
+    void grantModuleToOrganizationIsIdempotentAndDoesNotSendDuplicateNotification() {
+        Organization organization = organization(7);
+        Module module = module(3L, "VOTE", "Voting");
+        OrganizationModule existing = grantedModule(organization, module, 1);
+
+        when(organizationRepository.findById(organization.getId())).thenReturn(Optional.of(organization));
+        when(moduleService.getModuleByCode(module.getCode())).thenReturn(module);
+        when(organizationModuleRepository.findByOrganizationIdAndModuleId(organization.getId(), module.getId()))
+                .thenReturn(Optional.of(existing));
+        when(organizationModuleRepository.save(existing)).thenReturn(existing);
+
+        OrganizationModuleDto result = organizationModuleService.grantModuleToOrganization(
+                organization.getId(),
+                module.getCode(),
+                null
+        );
+
+        verify(organizationModuleRepository).save(existing);
+        verify(moduleNotificationEmailService, never()).sendModuleGrantedNotificationAfterCommit(
+                any(),
+                anyString(),
+                anyString()
+        );
+        assertEquals("VOTE", result.getModuleCode());
+    }
+
     private Organization organization(Integer id) {
         Organization organization = new Organization();
         organization.setId(id);
         organization.setName("Test Org");
         organization.setSlug("test-org");
+        organization.setEmail("contact@test-org.example");
         return organization;
     }
 

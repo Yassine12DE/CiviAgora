@@ -11,12 +11,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tn.esprit.tic.civiAgora.config.StripeIntegrationConfig;
 import tn.esprit.tic.civiAgora.dao.entity.Organization;
+import tn.esprit.tic.civiAgora.dao.entity.Module;
 import tn.esprit.tic.civiAgora.dao.entity.OrganizationRequest;
 import tn.esprit.tic.civiAgora.dao.entity.StripeCheckoutSessionRecord;
 import tn.esprit.tic.civiAgora.dao.entity.enums.OrganizationRequestStatus;
 import tn.esprit.tic.civiAgora.dao.entity.enums.PaymentStatus;
 import tn.esprit.tic.civiAgora.dao.entity.enums.StripeCheckoutFlow;
 import tn.esprit.tic.civiAgora.dao.entity.enums.StripeCheckoutStatus;
+import tn.esprit.tic.civiAgora.dao.entity.enums.SubscriptionBillingCycle;
 import tn.esprit.tic.civiAgora.dao.repository.OrganizationRepository;
 import tn.esprit.tic.civiAgora.dao.repository.OrganizationRequestRepository;
 import tn.esprit.tic.civiAgora.dao.repository.StripeCheckoutSessionRepository;
@@ -40,6 +42,9 @@ public class StripeCheckoutService {
     private final OrganizationRequestRepository requestRepository;
     private final OrganizationRepository organizationRepository;
     private final OrganizationRequestService organizationRequestService;
+    private final ModuleService moduleService;
+    private final OrganizationBillingService organizationBillingService;
+    private final BillingPricingService billingPricingService;
     private final ObjectMapper objectMapper;
 
     @Transactional
@@ -100,6 +105,9 @@ public class StripeCheckoutService {
                     .putMetadata("organizationRequestId", preparedCheckout.organizationRequestId() == null ? "" : String.valueOf(preparedCheckout.organizationRequestId()))
                     .putMetadata("organizationId", preparedCheckout.organizationId() == null ? "" : String.valueOf(preparedCheckout.organizationId()))
                     .putMetadata("planCode", safe(preparedCheckout.planCode()))
+                    .putMetadata("moduleCode", safe(preparedCheckout.moduleCode()))
+                    .putMetadata("billingCycle", preparedCheckout.billingCycle() == null ? "" : preparedCheckout.billingCycle().name())
+                    .putMetadata("subscriptionAction", safe(preparedCheckout.subscriptionAction()))
                     .putMetadata("moduleSummary", safe(preparedCheckout.moduleSummary()))
                     .putMetadata("referenceToken", safe(preparedCheckout.referenceToken()))
                     .build();
@@ -116,6 +124,9 @@ public class StripeCheckoutService {
                     .organizationName(preparedCheckout.organizationName())
                     .organizationSlug(preparedCheckout.organizationSlug())
                     .planCode(preparedCheckout.planCode())
+                    .moduleCode(preparedCheckout.moduleCode())
+                    .billingCycle(preparedCheckout.billingCycle())
+                    .subscriptionAction(preparedCheckout.subscriptionAction())
                     .moduleSummary(preparedCheckout.moduleSummary())
                     .paymentStatus(StripeCheckoutStatus.OPEN)
                     .currency(stripeIntegrationConfig.getCurrency())
@@ -161,11 +172,20 @@ public class StripeCheckoutService {
                     session.getPaymentStatus(),
                     normalizedSessionId
             );
-            maybeFinalizeOrganizationRequest(
+            maybeFinalizeCheckout(
                     record,
                     extractMetadataValue(session.getMetadata(), "paymentToken"),
                     extractMetadataValue(session.getMetadata(), "organizationRequestId"),
+                    extractMetadataValue(session.getMetadata(), "moduleCode"),
+                    extractMetadataValue(session.getMetadata(), "planCode"),
+                    extractMetadataValue(session.getMetadata(), "billingCycle"),
+                    extractMetadataValue(session.getMetadata(), "subscriptionAction"),
                     normalizedSessionId
+                    ,
+                    session.getPaymentIntent(),
+                    session.getCustomerEmail(),
+                    session.getCustomerDetails() != null ? session.getCustomerDetails().getName() : null,
+                    "paid".equalsIgnoreCase(session.getPaymentStatus())
             );
             return getCheckoutSessionByStripeSessionId(normalizedSessionId);
         } catch (StripeException exception) {
@@ -206,11 +226,20 @@ public class StripeCheckoutService {
                     sessionNode.path("payment_status").asText(null),
                     sessionId
             );
-            maybeFinalizeOrganizationRequest(
+            maybeFinalizeCheckout(
                     record,
                     extractText(sessionNode.path("metadata"), "paymentToken"),
                     extractText(sessionNode.path("metadata"), "organizationRequestId"),
+                    extractText(sessionNode.path("metadata"), "moduleCode"),
+                    extractText(sessionNode.path("metadata"), "planCode"),
+                    extractText(sessionNode.path("metadata"), "billingCycle"),
+                    extractText(sessionNode.path("metadata"), "subscriptionAction"),
                     sessionId
+                    ,
+                    sessionNode.path("payment_intent").asText(null),
+                    sessionNode.path("customer_email").asText(null),
+                    sessionNode.path("customer_details").path("name").asText(null),
+                    "paid".equalsIgnoreCase(sessionNode.path("payment_status").asText(null))
             );
         } catch (com.stripe.exception.SignatureVerificationException exception) {
             throw new IllegalArgumentException("Stripe webhook signature verification failed", exception);
@@ -219,12 +248,15 @@ public class StripeCheckoutService {
         }
     }
 
-    private PreparedCheckout prepareCheckout(StripeCheckoutSessionCreateRequestDto request) {
+    PreparedCheckout prepareCheckout(StripeCheckoutSessionCreateRequestDto request) {
         if (request.getFlowType() == StripeCheckoutFlow.ORGANIZATION_REQUEST) {
             return prepareOrganizationRequestCheckout(request);
         }
         if (request.getFlowType() == StripeCheckoutFlow.SUBSCRIPTION) {
             return prepareSubscriptionCheckout(request);
+        }
+        if (request.getFlowType() == StripeCheckoutFlow.MODULE_PURCHASE) {
+            return prepareModulePurchaseCheckout(request);
         }
         throw new IllegalArgumentException("Unsupported Stripe checkout flow");
     }
@@ -262,9 +294,12 @@ public class StripeCheckoutService {
                 organizationRequest.getId(),
                 null,
                 null,
+                null,
+                null,
+                null,
                 moduleSummary,
                 request.getPaymentToken(),
-                sessionContext(request.getPaymentToken(), organizationRequest.getId(), null, null, organizationRequest.getDesiredSlug(), organizationRequest.getOrganizationName())
+                sessionContext(request.getPaymentToken(), organizationRequest.getId(), null, null, null, null, null, organizationRequest.getDesiredSlug(), organizationRequest.getOrganizationName())
         );
     }
 
@@ -279,9 +314,12 @@ public class StripeCheckoutService {
         Organization organization = organizationRepository.findById(request.getOrganizationId())
                 .orElseThrow(() -> new IllegalArgumentException("Organization not found with ID " + request.getOrganizationId()));
 
-        BigDecimal amount = resolveSubscriptionAmount(request.getPlanCode());
+        SubscriptionBillingCycle billingCycle = request.getBillingCycle() == null
+                ? SubscriptionBillingCycle.MONTHLY
+                : request.getBillingCycle();
+        BigDecimal amount = billingPricingService.resolveSubscriptionPrice(request.getPlanCode(), billingCycle);
         String planCode = normalize(request.getPlanCode()).toUpperCase(Locale.ROOT);
-        String description = buildDescription("Subscription checkout", organization.getName(), planCode);
+        String description = buildDescription("Subscription checkout", organization.getName(), planCode + " / " + billingCycle.name().toLowerCase(Locale.ROOT));
 
         return new PreparedCheckout(
                 organization.getName(),
@@ -296,19 +334,75 @@ public class StripeCheckoutService {
                 organization.getId(),
                 planCode,
                 null,
+                billingCycle,
+                request.getSubscriptionAction() == null ? "RENEW" : request.getSubscriptionAction().trim().toUpperCase(Locale.ROOT),
                 null,
-                sessionContext(null, null, organization.getId(), planCode, organization.getSlug(), organization.getName())
+                "subscription-" + organization.getId(),
+                sessionContext(null, null, organization.getId(), planCode, null, billingCycle, request.getSubscriptionAction(), organization.getSlug(), organization.getName())
         );
     }
 
-    private BigDecimal resolveSubscriptionAmount(String planCode) {
-        String normalized = normalize(planCode).toUpperCase(Locale.ROOT);
-        return switch (normalized) {
-            case "STARTER" -> new BigDecimal("49.00");
-            case "PROFESSIONAL" -> new BigDecimal("99.00");
-            case "ENTERPRISE" -> new BigDecimal("199.00");
-            default -> throw new IllegalArgumentException("Unknown subscription plan: " + planCode);
+    private PreparedCheckout prepareModulePurchaseCheckout(StripeCheckoutSessionCreateRequestDto request) {
+        if (request.getOrganizationId() == null) {
+            throw new IllegalArgumentException("Organization id is required for module purchase checkout");
+        }
+        if (request.getModuleCode() == null || request.getModuleCode().isBlank()) {
+            throw new IllegalArgumentException("Module code is required for module purchase checkout");
+        }
+
+        Organization organization = organizationRepository.findById(request.getOrganizationId())
+                .orElseThrow(() -> new IllegalArgumentException("Organization not found with ID " + request.getOrganizationId()));
+
+        Module module = moduleService.getModuleByCode(request.getModuleCode());
+        organizationBillingService.createModulePurchaseRequest(
+                organization.getId(),
+                module.getCode(),
+                "Stripe checkout for module purchase"
+        );
+
+        BigDecimal amount = resolveModuleAmount(module, request.getBillingCycle());
+        SubscriptionBillingCycle billingCycle = request.getBillingCycle();
+        String description = buildDescription("Module purchase", organization.getName(), module.getName());
+
+        return new PreparedCheckout(
+                organization.getName(),
+                organization.getSlug(),
+                organization.getEmail(),
+                organization.getName(),
+                amount,
+                module.getName(),
+                description,
+                "module-" + organization.getId() + "-" + module.getCode(),
+                null,
+                organization.getId(),
+                null,
+                module.getCode(),
+                billingCycle,
+                "PURCHASE",
+                module.getName(),
+                "module-" + organization.getId() + "-" + module.getCode(),
+                sessionContext(null, null, organization.getId(), null, module.getCode(), billingCycle, "PURCHASE", organization.getSlug(), organization.getName())
+        );
+    }
+
+    private BigDecimal resolveModuleAmount(tn.esprit.tic.civiAgora.dao.entity.Module module, SubscriptionBillingCycle billingCycle) {
+        if (module == null) {
+            throw new IllegalArgumentException("Module not found");
+        }
+
+        BigDecimal amount = switch (billingCycle == null ? SubscriptionBillingCycle.MONTHLY : billingCycle) {
+            case YEARLY -> module.getYearlyPrice();
+            case MONTHLY -> module.getMonthlyPrice();
         };
+
+        if (amount == null || amount.signum() <= 0) {
+            amount = module.getOneTimePrice();
+        }
+        if (amount == null || amount.signum() <= 0) {
+            throw new IllegalStateException("No price configured for module " + module.getCode());
+        }
+
+        return amount;
     }
 
     private String buildDescription(String title, String organizationName, String detail) {
@@ -333,51 +427,100 @@ public class StripeCheckoutService {
         sessionRepository.save(record);
     }
 
-    private void maybeFinalizeOrganizationRequest(
+    private void maybeFinalizeCheckout(
             StripeCheckoutSessionRecord record,
             String paymentToken,
             String metadataRequestId,
-            String fallbackSessionId
+            String metadataModuleCode,
+            String metadataPlanCode,
+            String metadataBillingCycle,
+            String metadataSubscriptionAction,
+            String fallbackSessionId,
+            String paymentIntentId,
+            String customerEmail,
+            String customerName,
+            boolean paid
     ) {
         if (record == null) {
             return;
         }
 
-        Integer requestId = record.getOrganizationRequestId();
         String stripeSessionId = fallbackSessionId != null && !fallbackSessionId.isBlank()
                 ? fallbackSessionId
                 : record.getStripeSessionId();
 
-        if (metadataRequestId != null && !metadataRequestId.isBlank()) {
-            try {
-                requestId = Integer.valueOf(metadataRequestId);
-            } catch (NumberFormatException ignored) {
-                // Keep the repository-backed request id if the metadata is malformed.
+        if (record.getFlowType() == StripeCheckoutFlow.ORGANIZATION_REQUEST) {
+            Integer requestId = record.getOrganizationRequestId();
+            if (metadataRequestId != null && !metadataRequestId.isBlank()) {
+                try {
+                    requestId = Integer.valueOf(metadataRequestId);
+                } catch (NumberFormatException ignored) {
+                    // Keep repository-backed request id if metadata is malformed.
+                }
             }
-        }
 
-        if (requestId == null) {
+            if (requestId == null) {
+                return;
+            }
+
+            OrganizationRequest request = requestRepository.findById(requestId)
+                    .orElseThrow(() -> new IllegalStateException("Organization request not found for Stripe session " + stripeSessionId));
+
+            if (request.getPaymentStatus() == PaymentStatus.PAID && request.getRequestStatus() == OrganizationRequestStatus.APPROVED) {
+                if (request.getStripeSessionId() == null || request.getStripeSessionId().isBlank()) {
+                    request.setStripeSessionId(stripeSessionId);
+                    request.setUpdatedAt(LocalDateTime.now());
+                    requestRepository.save(request);
+                }
+                return;
+            }
+
+            organizationRequestService.markPaymentCompleted(
+                    request.getId(),
+                    "stripe-webhook",
+                    paymentToken == null || paymentToken.isBlank() ? record.getReferenceToken() : paymentToken,
+                    stripeSessionId
+            );
             return;
         }
 
-        OrganizationRequest request = requestRepository.findById(requestId)
-                .orElseThrow(() -> new IllegalStateException("Organization request not found for Stripe session " + stripeSessionId));
-
-        if (request.getPaymentStatus() == PaymentStatus.PAID && request.getRequestStatus() == OrganizationRequestStatus.APPROVED) {
-            if (request.getStripeSessionId() == null || request.getStripeSessionId().isBlank()) {
-                request.setStripeSessionId(stripeSessionId);
-                request.setUpdatedAt(LocalDateTime.now());
-                requestRepository.save(request);
-            }
+        if (!paid) {
             return;
         }
 
-        organizationRequestService.markPaymentCompleted(
-                request.getId(),
-                "stripe-webhook",
-                paymentToken == null || paymentToken.isBlank() ? record.getReferenceToken() : paymentToken,
-                stripeSessionId
-        );
+        Integer organizationId = record.getOrganizationId();
+        if (organizationId == null) {
+            return;
+        }
+
+        if (record.getFlowType() == StripeCheckoutFlow.SUBSCRIPTION) {
+            organizationBillingService.markSubscriptionPaymentSuccess(
+                    organizationId,
+                    metadataPlanCode == null || metadataPlanCode.isBlank() ? record.getPlanCode() : metadataPlanCode,
+                    metadataBillingCycle == null || metadataBillingCycle.isBlank()
+                            ? record.getBillingCycle()
+                            : SubscriptionBillingCycle.valueOf(metadataBillingCycle.trim().toUpperCase(Locale.ROOT)),
+                    metadataSubscriptionAction == null || metadataSubscriptionAction.isBlank()
+                            ? record.getSubscriptionAction()
+                            : metadataSubscriptionAction,
+                    stripeSessionId,
+                    paymentIntentId,
+                    customerEmail,
+                    customerName
+            );
+            return;
+        }
+
+        if (record.getFlowType() == StripeCheckoutFlow.MODULE_PURCHASE) {
+            organizationBillingService.markModulePurchasePaymentSuccess(
+                    organizationId,
+                    metadataModuleCode == null || metadataModuleCode.isBlank() ? record.getModuleCode() : metadataModuleCode,
+                    stripeSessionId,
+                    paymentIntentId,
+                    customerEmail,
+                    customerName
+            );
+        }
     }
 
     private String extractMetadataValue(Map<String, String> metadata, String fieldName) {
@@ -410,13 +553,30 @@ public class StripeCheckoutService {
         return url;
     }
 
-    private Map<String, String> sessionContext(String paymentToken, Integer requestId, Integer organizationId, String planCode, String slug, String name) {
+    private Map<String, String> sessionContext(
+            String paymentToken,
+            Integer requestId,
+            Integer organizationId,
+            String planCode,
+            String moduleCode,
+            SubscriptionBillingCycle billingCycle,
+            String subscriptionAction,
+            String slug,
+            String name
+    ) {
         return Map.of(
-                "flow", paymentToken != null ? StripeCheckoutFlow.ORGANIZATION_REQUEST.name() : StripeCheckoutFlow.SUBSCRIPTION.name(),
+                "flow", paymentToken != null
+                        ? StripeCheckoutFlow.ORGANIZATION_REQUEST.name()
+                        : moduleCode != null && !moduleCode.isBlank()
+                        ? StripeCheckoutFlow.MODULE_PURCHASE.name()
+                        : StripeCheckoutFlow.SUBSCRIPTION.name(),
                 "paymentToken", safe(paymentToken),
                 "organizationRequestId", requestId == null ? "" : String.valueOf(requestId),
                 "organizationId", organizationId == null ? "" : String.valueOf(organizationId),
                 "planCode", safe(planCode),
+                "moduleCode", safe(moduleCode),
+                "billingCycle", billingCycle == null ? "" : billingCycle.name(),
+                "subscriptionAction", safe(subscriptionAction),
                 "organizationSlug", safe(slug),
                 "organizationName", safe(name)
         );
@@ -458,6 +618,9 @@ public class StripeCheckoutService {
                 .organizationName(record.getOrganizationName())
                 .organizationSlug(record.getOrganizationSlug())
                 .planCode(record.getPlanCode())
+                .moduleCode(record.getModuleCode())
+                .billingCycle(record.getBillingCycle())
+                .subscriptionAction(record.getSubscriptionAction())
                 .moduleSummary(record.getModuleSummary())
                 .paymentStatus(record.getPaymentStatus())
                 .currency(record.getCurrency())
@@ -499,7 +662,7 @@ public class StripeCheckoutService {
         return current.getMessage() == null ? throwable.getMessage() : current.getMessage();
     }
 
-    private record PreparedCheckout(
+    public record PreparedCheckout(
             String organizationName,
             String organizationSlug,
             String customerEmail,
@@ -511,6 +674,9 @@ public class StripeCheckoutService {
             Integer organizationRequestId,
             Integer organizationId,
             String planCode,
+            String moduleCode,
+            SubscriptionBillingCycle billingCycle,
+            String subscriptionAction,
             String moduleSummary,
             String referenceToken,
             Map<String, String> sessionContext

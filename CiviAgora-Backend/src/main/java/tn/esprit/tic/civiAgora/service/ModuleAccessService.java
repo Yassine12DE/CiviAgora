@@ -16,9 +16,13 @@ public class ModuleAccessService {
 
     private final OrganizationModuleRepository organizationModuleRepository;
     private final TenantAccessService tenantAccessService;
+    private final OrganizationBillingService organizationBillingService;
 
     public List<Map<String, Object>> getModulesForCurrentUser() {
         Organization currentOrganization = tenantAccessService.getCurrentOrganizationEntityOrThrow();
+        if (!organizationBillingService.isSubscriptionActive(currentOrganization)) {
+            return List.of();
+        }
 
         List<OrganizationModule> modules =
                 organizationModuleRepository

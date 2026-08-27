@@ -14,6 +14,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import tn.esprit.tic.civiAgora.dao.entity.enums.StripeCheckoutFlow;
 import tn.esprit.tic.civiAgora.dao.entity.enums.StripeCheckoutStatus;
+import tn.esprit.tic.civiAgora.dao.entity.enums.SubscriptionBillingCycle;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -54,6 +55,16 @@ public class StripeCheckoutSessionRecord {
 
     @Column(name = "plan_code", length = 120)
     private String planCode;
+
+    @Column(name = "module_code", length = 120)
+    private String moduleCode;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "billing_cycle", length = 32)
+    private SubscriptionBillingCycle billingCycle;
+
+    @Column(name = "subscription_action", length = 64)
+    private String subscriptionAction;
 
     @Column(name = "module_summary", length = 512)
     private String moduleSummary;

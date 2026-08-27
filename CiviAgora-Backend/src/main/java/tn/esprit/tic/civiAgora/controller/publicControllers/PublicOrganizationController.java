@@ -10,10 +10,12 @@ import tn.esprit.tic.civiAgora.dao.entity.enums.OrganizationContentType;
 import tn.esprit.tic.civiAgora.dto.contentDto.OrganizationContentDto;
 import tn.esprit.tic.civiAgora.dto.moduleDto.OrganizationModuleDto;
 import tn.esprit.tic.civiAgora.dto.organizationSettingsDto.OrganizationSettingsDto;
+import tn.esprit.tic.civiAgora.dto.surveyDto.SurveyDto;
 import tn.esprit.tic.civiAgora.service.OrganizationContentService;
 import tn.esprit.tic.civiAgora.service.OrganizationModuleService;
 import tn.esprit.tic.civiAgora.service.OrganizationService;
 import tn.esprit.tic.civiAgora.service.OrganizationSettingsService;
+import tn.esprit.tic.civiAgora.service.SurveyService;
 
 import java.util.List;
 
@@ -26,6 +28,7 @@ public class PublicOrganizationController {
     private final OrganizationModuleService organizationModuleService;
     private final OrganizationService organizationService;
     private final OrganizationContentService organizationContentService;
+    private final SurveyService surveyService;
 
     @GetMapping
     public ResponseEntity<?> getCurrentOrganization() {
@@ -50,5 +53,15 @@ public class PublicOrganizationController {
         return ResponseEntity.ok(
                 organizationContentService.getCurrentOrganizationPublicContent(contentType)
         );
+    }
+
+    @GetMapping("/surveys")
+    public ResponseEntity<List<SurveyDto>> getPublishedSurveys() {
+        return ResponseEntity.ok(surveyService.listPublic());
+    }
+
+    @GetMapping("/surveys/{surveyId}")
+    public ResponseEntity<SurveyDto> getPublishedSurvey(@PathVariable Long surveyId) {
+        return ResponseEntity.ok(surveyService.getPublic(surveyId));
     }
 }

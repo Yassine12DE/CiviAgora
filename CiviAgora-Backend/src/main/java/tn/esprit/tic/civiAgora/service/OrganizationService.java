@@ -7,6 +7,8 @@ import tn.esprit.tic.civiAgora.dao.entity.OrganizationRequest;
 import tn.esprit.tic.civiAgora.dao.entity.OrganizationSettings;
 import tn.esprit.tic.civiAgora.dao.entity.User;
 import tn.esprit.tic.civiAgora.dao.entity.enums.OrganizationStatus;
+import tn.esprit.tic.civiAgora.dao.entity.enums.SubscriptionBillingCycle;
+import tn.esprit.tic.civiAgora.dao.entity.enums.SubscriptionStatus;
 import tn.esprit.tic.civiAgora.dao.repository.OrganizationRepository;
 import tn.esprit.tic.civiAgora.dao.repository.OrganizationSettingsRepository;
 import tn.esprit.tic.civiAgora.dao.repository.UserRepository;
@@ -56,6 +58,7 @@ public class OrganizationService {
     // Create a new organization
     public Organization createOrganization(Organization organization) {
         organization.setCreatedAt(LocalDateTime.now());
+        initializeDefaultSubscription(organization);
         Organization created = organizationRepository.save(organization);
         if (organizationSettingsRepository.findByOrganizationId(created.getId()).isEmpty()) {
             organizationSettingsService.createDefaultSettingsForOrganization(created);
@@ -159,6 +162,7 @@ public class OrganizationService {
         org.setAddress(request.getAddress());
         org.setDescription(request.getDescription());
         org.setOrganizationLogoUrl(request.getLogoUrl());
+        initializeDefaultSubscription(org);
 
         Organization created = organizationRepository.save(org);
 
@@ -188,6 +192,37 @@ public class OrganizationService {
         Organization org = getOrganizationBySlug(slug);
         int usersCount = (int) userRepository.countUsersByOrganization(org.getId());
         return organizationMapper.toOrganizationDto(org, usersCount);
+    }
+
+    private void initializeDefaultSubscription(Organization organization) {
+        if (organization == null) {
+            return;
+        }
+
+        if (organization.getSubscriptionPlanCode() == null || organization.getSubscriptionPlanCode().isBlank()) {
+            organization.setSubscriptionPlanCode("STARTER");
+        }
+        if (organization.getSubscriptionBillingCycle() == null) {
+            organization.setSubscriptionBillingCycle(SubscriptionBillingCycle.YEARLY);
+        }
+        if (organization.getSubscriptionStatus() == null) {
+            organization.setSubscriptionStatus(SubscriptionStatus.ACTIVE);
+        }
+        if (organization.getSubscriptionStartAt() == null) {
+            organization.setSubscriptionStartAt(LocalDateTime.now());
+        }
+        if (organization.getSubscriptionEndAt() == null) {
+            organization.setSubscriptionEndAt(organization.getSubscriptionStartAt().plusYears(1));
+        }
+        if (organization.getSubscriptionLastRenewedAt() == null) {
+            organization.setSubscriptionLastRenewedAt(LocalDateTime.now());
+        }
+        if (organization.getSubscriptionAutoRenew() == null) {
+            organization.setSubscriptionAutoRenew(Boolean.FALSE);
+        }
+        if (organization.getSubscriptionRenewalCount() == null) {
+            organization.setSubscriptionRenewalCount(0);
+        }
     }
 
     public PublicOrganizationBrandingDto getCurrentOrganizationBranding() {

@@ -14,6 +14,8 @@ import tn.esprit.tic.civiAgora.dao.repository.OrganizationContentItemRepository;
 import tn.esprit.tic.civiAgora.dao.repository.OrganizationContentResponseRepository;
 import tn.esprit.tic.civiAgora.dao.repository.OrganizationModuleRepository;
 import tn.esprit.tic.civiAgora.dao.repository.UserRepository;
+import tn.esprit.tic.civiAgora.dao.repository.SurveyRepository;
+import tn.esprit.tic.civiAgora.dao.repository.SurveySubmissionRepository;
 import tn.esprit.tic.civiAgora.dto.analyticsDto.AnalyticsDashboardDto;
 
 import java.util.List;
@@ -40,6 +42,12 @@ class OrganizationAnalyticsServiceTest {
     private OrganizationContentResponseRepository contentResponseRepository;
     @Mock
     private ModuleRequestRepository moduleRequestRepository;
+    @Mock
+    private OrganizationBillingService organizationBillingService;
+    @Mock
+    private SurveyRepository surveyRepository;
+    @Mock
+    private SurveySubmissionRepository surveySubmissionRepository;
 
     private OrganizationAnalyticsService service;
 
@@ -51,7 +59,10 @@ class OrganizationAnalyticsServiceTest {
                 userRepository,
                 contentItemRepository,
                 contentResponseRepository,
-                moduleRequestRepository
+                moduleRequestRepository,
+                organizationBillingService,
+                surveyRepository,
+                surveySubmissionRepository
         );
     }
 
@@ -94,10 +105,13 @@ class OrganizationAnalyticsServiceTest {
         when(organizationModuleRepository
                 .findByOrganizationIdAndGrantedBySaasTrueAndEnabledByOrganizationTrueOrderByDisplayOrderAsc(organizationId))
                 .thenReturn(List.of(organizationModule));
+        when(organizationBillingService.isSubscriptionActive(organizationId)).thenReturn(true);
         when(userRepository.findByOrganizationId(organizationId)).thenReturn(List.of());
         when(contentItemRepository.findByOrganizationIdOrderByCreatedAtDesc(organizationId)).thenReturn(List.of());
         when(contentResponseRepository.findByOrganizationId(organizationId)).thenReturn(List.of());
         when(moduleRequestRepository.findByOrganizationId(organizationId)).thenReturn(List.of());
+        when(surveyRepository.findByOrganizationId(organizationId)).thenReturn(List.of());
+        when(surveySubmissionRepository.findByOrganizationId(organizationId)).thenReturn(List.of());
 
         AnalyticsDashboardDto dashboard = service.getDashboard(organizationId);
 

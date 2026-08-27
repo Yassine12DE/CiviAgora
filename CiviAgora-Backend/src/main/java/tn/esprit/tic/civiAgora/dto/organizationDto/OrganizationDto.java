@@ -5,6 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import tn.esprit.tic.civiAgora.dao.entity.enums.SubscriptionBillingCycle;
+import tn.esprit.tic.civiAgora.dao.entity.enums.SubscriptionStatus;
+
+import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -22,4 +26,13 @@ public class OrganizationDto {
     private String phone;
     private String address;
     private String description;
+    private String subscriptionPlanCode;
+    private SubscriptionBillingCycle subscriptionBillingCycle;
+    private SubscriptionStatus subscriptionStatus;
+    private LocalDateTime subscriptionStartAt;
+    private LocalDateTime subscriptionEndAt;
+    private LocalDateTime subscriptionLastRenewedAt;
+    private LocalDateTime subscriptionPendingSince;
+    private Boolean subscriptionAutoRenew;
+    private Integer subscriptionRenewalCount;
 }

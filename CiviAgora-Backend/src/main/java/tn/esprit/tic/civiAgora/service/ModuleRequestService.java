@@ -2,6 +2,7 @@ package tn.esprit.tic.civiAgora.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tn.esprit.tic.civiAgora.dao.entity.Module;
 import tn.esprit.tic.civiAgora.dao.entity.ModuleRequest;
 import tn.esprit.tic.civiAgora.dao.entity.Organization;
@@ -106,6 +107,7 @@ public class ModuleRequestService {
         return moduleRequestMapper.toDto(moduleRequestRepository.save(request));
     }
 
+    @Transactional
     public ModuleRequestDto approveRequest(Long requestId, String comment) {
         ModuleRequest request = moduleRequestRepository.findById(requestId)
                 .orElseThrow(() -> new RuntimeException("Module request not found"));
@@ -127,6 +129,7 @@ public class ModuleRequestService {
         return moduleRequestMapper.toDto(moduleRequestRepository.save(request));
     }
 
+    @Transactional
     public ModuleRequestDto rejectRequest(Long requestId, String comment) {
         ModuleRequest request = moduleRequestRepository.findById(requestId)
                 .orElseThrow(() -> new RuntimeException("Module request not found"));
@@ -138,7 +141,7 @@ public class ModuleRequestService {
         request.setStatus(ModuleRequestStatus.REJECTED);
         request.setReviewedDate(LocalDateTime.now());
         request.setComment(comment);
-        moduleNotificationEmailService.sendModuleRequestRejectedNotification(
+        moduleNotificationEmailService.sendModuleRequestRejectedNotificationAfterCommit(
                 request.getOrganization(),
                 request.getModule().getName(),
                 request.getModule().getCode(),

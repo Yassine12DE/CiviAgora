@@ -3,6 +3,7 @@ package tn.esprit.tic.civiAgora.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import tn.esprit.tic.civiAgora.dao.entity.Module;
+import tn.esprit.tic.civiAgora.dao.entity.enums.ModuleBillingType;
 import tn.esprit.tic.civiAgora.dao.entity.enums.ModuleScope;
 import tn.esprit.tic.civiAgora.dao.repository.ModuleRepository;
 import tn.esprit.tic.civiAgora.dao.repository.OrganizationModuleRepository;
@@ -68,6 +69,10 @@ public class ModuleService {
                     dto.setName(module.getName());
                     dto.setDescription(module.getDescription());
                     dto.setScope(ModuleScope.resolveOrDefault(module.getScope()).name());
+                    dto.setBillingType(module.getBillingType() == null ? null : module.getBillingType().name());
+                    dto.setOneTimePrice(module.getOneTimePrice());
+                    dto.setMonthlyPrice(module.getMonthlyPrice());
+                    dto.setYearlyPrice(module.getYearlyPrice());
                     dto.setActive(Boolean.TRUE.equals(module.getActive()));
                     dto.setOrganizationsUsing(
                             organizationModuleRepository.countByModuleIdAndGrantedBySaasTrue(module.getId())
@@ -99,6 +104,10 @@ public class ModuleService {
                 .name(request.getName().trim())
                 .description(request.getDescription() == null ? null : request.getDescription().trim())
                 .scope(parseScope(request.getScope()))
+                .billingType(parseBillingType(request.getBillingType()))
+                .oneTimePrice(request.getOneTimePrice())
+                .monthlyPrice(request.getMonthlyPrice())
+                .yearlyPrice(request.getYearlyPrice())
                 .active(request.getActive() == null ? Boolean.TRUE : request.getActive())
                 .build();
 
@@ -130,6 +139,18 @@ public class ModuleService {
         if (request.getScope() != null) {
             module.setScope(parseScope(request.getScope()));
         }
+        if (request.getBillingType() != null) {
+            module.setBillingType(parseBillingType(request.getBillingType()));
+        }
+        if (request.getOneTimePrice() != null) {
+            module.setOneTimePrice(request.getOneTimePrice());
+        }
+        if (request.getMonthlyPrice() != null) {
+            module.setMonthlyPrice(request.getMonthlyPrice());
+        }
+        if (request.getYearlyPrice() != null) {
+            module.setYearlyPrice(request.getYearlyPrice());
+        }
         if (request.getActive() != null) {
             module.setActive(request.getActive());
         }
@@ -145,6 +166,17 @@ public class ModuleService {
             return ModuleScope.valueOf(scopeValue.trim().toUpperCase(Locale.ROOT));
         } catch (IllegalArgumentException ex) {
             throw new IllegalArgumentException("Invalid module scope: " + scopeValue);
+        }
+    }
+
+    private ModuleBillingType parseBillingType(String billingTypeValue) {
+        if (billingTypeValue == null || billingTypeValue.isBlank()) {
+            return ModuleBillingType.ONE_TIME;
+        }
+        try {
+            return ModuleBillingType.valueOf(billingTypeValue.trim().toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException ex) {
+            throw new IllegalArgumentException("Invalid module billing type: " + billingTypeValue);
         }
     }
 

@@ -26,6 +26,7 @@ public class OrganizationModuleService {
     private final OrganizationModuleMapper organizationModuleMapper;
     private final TenantAccessService tenantAccessService;
     private final ModuleNotificationEmailService moduleNotificationEmailService;
+    private final OrganizationSubscriptionAccessPolicy subscriptionAccessPolicy;
 
     public List<OrganizationModuleDto> getAllModulesForOrganization(Integer organizationId) {
         getOrganizationOrThrow(organizationId);
@@ -35,7 +36,10 @@ public class OrganizationModuleService {
     }
 
     public List<OrganizationModuleDto> getVisibleModulesForOrganization(Integer organizationId) {
-        getOrganizationOrThrow(organizationId);
+        Organization organization = getOrganizationOrThrow(organizationId);
+        if (!subscriptionAccessPolicy.hasActiveAccess(organization)) {
+            return List.of();
+        }
         return mapOrganizationModules(organizationModuleRepository
                 .findByOrganizationIdAndGrantedBySaasTrueAndEnabledByOrganizationTrueOrderByDisplayOrderAsc(
                         organizationId
@@ -51,6 +55,10 @@ public class OrganizationModuleService {
 
     public List<OrganizationModuleDto> getTenantModules(Integer organizationId) {
         tenantAccessService.assertOrganizationAccessOrThrow(organizationId);
+        Organization organization = getOrganizationOrThrow(organizationId);
+        if (!subscriptionAccessPolicy.hasActiveAccess(organization)) {
+            return List.of();
+        }
         return mapOrganizationModules(
                 organizationModuleRepository.findByOrganizationIdAndGrantedBySaasTrue(organizationId)
                         .stream()
@@ -88,7 +96,7 @@ public class OrganizationModuleService {
         organizationModule.setEnabledByOrganization(true);
         applyDisplayOrder(organizationModule, organizationId, displayOrder);
         organizationModuleRepository.save(organizationModule);
-        moduleNotificationEmailService.sendModuleGrantedNotification(
+        moduleNotificationEmailService.sendModuleGrantedNotificationAfterCommit(
                 organization,
                 module.getName(),
                 module.getCode()
@@ -110,15 +118,19 @@ public class OrganizationModuleService {
                         .module(module)
                         .build());
 
+        boolean newlyGranted = !Boolean.TRUE.equals(organizationModule.getGrantedBySaas());
+
         organizationModule.setGrantedBySaas(true);
         organizationModule.setEnabledByOrganization(true);
         applyDisplayOrder(organizationModule, organizationId, displayOrder);
         OrganizationModule saved = organizationModuleRepository.save(organizationModule);
-        moduleNotificationEmailService.sendModuleGrantedNotification(
-                organization,
-                module.getName(),
-                module.getCode()
-        );
+        if (newlyGranted) {
+            moduleNotificationEmailService.sendModuleGrantedNotificationAfterCommit(
+                    organization,
+                    module.getName(),
+                    module.getCode()
+            );
+        }
         return organizationModuleMapper.toDto(saved);
     }
 
@@ -234,4 +246,5 @@ public class OrganizationModuleService {
             throw new IllegalStateException("Module is inactive in the global catalog");
         }
     }
+
 }

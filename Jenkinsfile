@@ -21,7 +21,7 @@ pipeline {
             steps {
                 withCredentials([
                     string(
-                        credentialsId: 'Admin123****',
+                        credentialsId: 'sonar-token',
                         variable: 'squ_a74e6629969926622d8860453982233f0c92e35d'
                     )
                 ]) {

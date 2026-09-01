@@ -1,17 +1,28 @@
 pipeline {
     agent any
 
+    environment {
+        JAVA_HOME = '/usr/lib/jvm/java-17-openjdk-amd64'
+        PATH = "${JAVA_HOME}/bin:${env.PATH}"
+    }
+
     stages {
 
-        stage('Testing Maven') {
+        stage('Environment Check') {
             steps {
-                sh 'mvn -version'
-            }
-        }
+                sh '''
+                    echo "===== JAVA ====="
+                    java -version
 
-        stage('Testing JDK') {
-            steps {
-                sh 'java -version'
+                    echo "===== JAVAC ====="
+                    javac -version
+
+                    echo "===== MAVEN ====="
+                    mvn -version
+
+                    echo "===== JAVA_HOME ====="
+                    echo $JAVA_HOME
+                '''
             }
         }
 
@@ -26,10 +37,10 @@ pipeline {
                     ]) {
                         sh '''
                             mvn clean verify \
-                                org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-                                -Dsonar.projectKey=CIVOX-backend \
-                                -Dsonar.host.url=http://192.168.221.133:9000 \
-                                -Dsonar.token=$SONAR_TOKEN
+                              org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+                              -Dsonar.projectKey=CIVOX-backend \
+                              -Dsonar.host.url=http://192.168.221.133:9000 \
+                              -Dsonar.token=$SONAR_TOKEN
                         '''
                     }
                 }

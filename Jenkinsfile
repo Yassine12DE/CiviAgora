@@ -21,7 +21,7 @@ pipeline {
             steps {
                 withCredentials([
                     string(
-                        credentialsId: 'squ_a74e6629969926622d8860453982233f0c92e35d',
+                        credentialsId: 'sonar-token',
                         variable: 'SONAR_TOKEN'
                     )
                 ]) {

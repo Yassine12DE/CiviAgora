@@ -8,7 +8,19 @@ pipeline {
 
     stages {
 
-        stage('Environment Check') {
+            stage('Testing Maven') {
+                steps {
+                    sh 'mvn -version'
+                }
+            }
+
+            stage('Testing JDK') {
+                steps {
+                    sh 'java -version'
+                }
+            }
+
+            stage('Environment Check') {
             steps {
                 sh '''
                     echo "===== JAVA ====="

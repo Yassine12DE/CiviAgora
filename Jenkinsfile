@@ -26,7 +26,8 @@ pipeline {
                     )
                 ]) {
                     sh '''
-                        mvn sonar:sonar \
+                        mvn clean verify \
+                        org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
                         -Dsonar.projectKey=CIVOX-backend \
                         -Dsonar.host.url=http://192.168.221.133:9000 \
                         -Dsonar.token=$SONAR_TOKEN
@@ -34,6 +35,4 @@ pipeline {
                 }
             }
         }
-
-    }
 }
